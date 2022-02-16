@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Antecedente;
 use App\Models\AntecedentesOpcionesModel;
+use App\Models\Cie;
+use App\Models\Cita;
+use App\Models\Enfermeria;
 use App\Models\FichaModel;
 use App\Models\OdontogramaLayout;
+use App\Models\Odontologia;
 use App\Models\OdontologiaModel;
+use App\Models\Patologia;
 use App\Models\PatologiaModel;
+use App\Models\Plan;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -17,36 +24,16 @@ class OdontologiaController extends Controller
     {
         $model = new OdontologiaModel();
         $pacientes = $model->getPacientesEnEspera();
-        return view('odontologia/index',['pacientes'=>$pacientes]);
-    }   
-
-    public function pacientes()
-    {
-        try {
-            $model = new OdontologiaModel();
-            $pacientes = $model->getPacientesEnEspera();
-            if (!empty($pacientes)) {
-                $response = [
-                    'err' => false,
-                    'result' => $pacientes
-                ];
-                echo json_encode($response);
-            } else {
-                $response = [
-                    'err' => true,
-                    'result' => null
-                ];
-                echo json_encode($response);
-            }
-        } catch (Exception $e) {
-            $response = [
-                'err' => true,
-                'result' => null
-            ];
-            error_log($e);
-            echo json_encode($response);
-        }
+        return view('odontologia/index', ['pacientes' => $pacientes]);
     }
+
+    public function  pacientes()
+    {
+        $model = new Odontologia();
+        $pacientes = $model->getPacientesEnEspera();
+        return $this->sendResponse($pacientes,'Pacientes en espera');
+    }
+
     public function historiales()
     {
         try {
@@ -135,7 +122,26 @@ class OdontologiaController extends Controller
             $model->delete($idOdo);
             return redirect('/odontologia');
         } catch (\Throwable $th) {
-            
         }
+    }
+
+    public function resultado($id_cita)
+    {
+        $cita=Cita::find($id_cita);
+        $paciente=$cita->paciente;
+        $enfermeria=Enfermeria::where('id_cita','=',$cita->id)->firstOrFail();
+        $antecedentes=Antecedente::all();
+        $patologias=Patologia::all();
+        $planes=Plan::all();
+        $cies=Cie::all();
+        $result=[
+            'paciente'=>$paciente,
+            'enfermeria'=>$enfermeria,
+            'antecedentes'=>$antecedentes,
+            'patologias'=>$patologias,
+            'planes'=>$planes,
+            'cies'=>$cies
+        ];
+        return $this->sendResponse($result,'Informacion del paciente');
     }
 }

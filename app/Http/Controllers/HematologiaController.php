@@ -4,98 +4,77 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Hematologia;
+use App\Models\Pendiente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class HematologiaController extends Controller
 {
     //
     public function index()
     {
-        return view('laboratorio.index');
-    }
-
-    public function nuevo(Request $request)
-    {
-        $model=new Hematologia();
-        $doctores=Doctor::all();
-        if($request->has('texto')){
-            $texto=$request->query('texto');
-            $ultimaCita=$model->ultimaCita($texto);
-            return view('laboratorio.hematologia.nuevo',compact('doctores','ultimaCita','texto'));
-        }
         
-        return view('laboratorio.hematologia.nuevo',compact('doctores'));
     }
 
-    private function validateRequest(Request $request)
+    public function validateExamenHematologia(Request $request)
     {
-        $validated = $request->validate([
+        return Validator::make($request->all(), [
             'id_cita' => 'required|numeric',
             'id_doc' => 'required|numeric',
             'id_tipo' => 'required|numeric',
-            'sedimento'=> 'required|numeric',
-            'hematocrito'=> 'required|numeric',
-            'hemoglobina'=> 'required|numeric',
-            'hematies'=> 'required|numeric',
-            'leucocitos'=> 'required|numeric',
-            'segmentados'=> 'required|numeric',
-            'linfocitos'=> 'required|numeric',
-            'eosinofilos'=> 'required|numeric',
-            'monocitos'=> 'required|numeric',
-            't_coagulacion'=> 'required|max:45',
-            't_sangria'=> 'required|max:45',
-            't_plaquetas'=> 'required|max:45',
-            't_protombina_tp'=> 'required|max:45',
-            't_parcial_de_tromboplastine'=> 'required|max:45',
-            'fibrinogeno'=> 'required|max:45',
-            'observaciones'=> 'required|max:200'
+            'sedimento' => 'required|numeric',
+            'hematocrito' => 'required|numeric',
+            'hemoglobina' => 'required|numeric',
+            'hematies' => 'required|numeric',
+            'leucocitos' => 'required|numeric',
+            'segmentados' => 'required|numeric',
+            'linfocitos' => 'required|numeric',
+            'eosinofilos' => 'required|numeric',
+            'monocitos' => 'required|numeric',
+            't_coagulacion' => 'required|max:45',
+            't_sangria' => 'required|max:45',
+            't_plaquetas' => 'required|max:45',
+            't_protombina_tp' => 'required|max:45',
+            't_parcial_de_tromboplastine' => 'required|max:45',
+            'fibrinogeno' => 'required|max:45',
+            'observaciones' => 'required|max:200'
         ]);
     }
 
-    public function guardar(Request $request)
+    public function store(Request $request)
     {
-        $this->validateRequest($request);
-        $model = Hematologia::create($request->except(['_token']));
-        $model->save();
-        return redirect()->route('hematologia.nuevo');
+        try {
+            $validator = $this->validateExamenHematologia($request);
+            DB::beginTransaction();
+            if (count($validator->errors()) > 0) {
+                return $this->sendError('Errores', $validator->errors());
+            }
+            $validated = $validator->validated();
+            $validated['atendido'] = true;
+            $model = Hematologia::create($validated);
+            $pendiente = Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente = false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage());
+            }
+            return $this->sendError($th->getMessage());
+        }
     }
 
-    public function update(Request $request, $id_hematologia)
+    public function update(Request $request, Hematologia $hematologia)
     {
-        $this->validateRequest($request);
-        $hematologia = Hematologia::find($id_hematologia);
-        $hematologia->update($request->except(['_token', '_method']));
-        return redirect()->route('hematologia.editar');
-    }
-
-
-    public function editar(Request $request)
-    {
-        $model=new Hematologia();
-        $texto=$request->query('texto','');
-        $datos=$model->buscar($texto);
-        return view('laboratorio.hematologia.editar',compact('texto','datos'));
-    }
-    public function edit($id_hematologia)
-    {
-        $hematologia = Hematologia::find($id_hematologia);
-        if ($hematologia == null)
-            return abort(404);
-        $doctores = Doctor::all();
-        return view('laboratorio.hematologia.edit', ['hematologia' => $hematologia, 'doctores' => $doctores]);
-    }
-
-    public function delete($id_hematologia)
-    {
-        $hematologia = Hematologia::find($id_hematologia);
-        if ($hematologia == null)
-            return abort(404);
-        $hematologia->delete();
-        return redirect()->route('hematologia.editar');
-    }
-
-    public function todos()
-    {
-        return view('laboratorio.hematologia.eliminar');
+        $validator = $this->validateExamenHematologia($request);
+        if (count($validator->errors()) > 0) {
+            return $this->sendError('Error en la petición', $validator->errors());
+        }
+        $hematologia->update($validator->validated());
+        return $this->sendResponse($hematologia, 'Registro actualizado');
     }
 }

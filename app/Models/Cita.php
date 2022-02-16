@@ -18,6 +18,12 @@ class Cita extends Model
         'factura_cita',
         'estado_cita',
         'id_paciente',
-        'estadisticas'
+        'estadisticas',
+        'atendido'
     ];
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class,'id_paciente');
+    }
+    
 }

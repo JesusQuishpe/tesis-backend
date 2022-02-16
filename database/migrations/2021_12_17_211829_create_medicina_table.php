@@ -15,31 +15,32 @@ class CreateMedicinaTable extends Migration
     {
         Schema::create('medicina', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('id_cita');
-            $table->foreign('id_cita')->references('id')->on('citas');
-            $table->tinyText('tipo');//INYTEXT: 255 characters - 255 B.
-            $table->tinyText('valor');
-            $table->tinyText('sintoma1');
-            $table->tinyText('sintoma2');
-            $table->tinyText('sintoma3');
-            $table->tinyText('presuntivo1');
-            $table->tinyText('presuntivo2');
-            $table->tinyText('presuntivo3');
-            $table->tinyText('definitivo1');
-            $table->tinyText('definitivo2');
-            $table->tinyText('definitivo3');
-            $table->tinyText('medicamento1');
-            $table->tinyText('medicamento2');
-            $table->tinyText('medicamento3');
-            $table->tinyText('medicamento4');
-            $table->tinyText('medicamento5');
-            $table->tinyText('medicamento6');
-            $table->tinyText('dosificacion1');
-            $table->tinyText('dosificacion2');
-            $table->tinyText('dosificacion3');
-            $table->tinyText('dosificacion4');
-            $table->tinyText('dosificacion5');
-            $table->tinyText('dosificacion6');
+            $table->unsignedBigInteger('id_enfermeria');
+            $table->foreign('id_enfermeria')->references('id')->on('enfermeria');
+            //$table->tinyText('tipo');//INYTEXT: 255 characters - 255 B.
+            //$table->tinyText('valor');
+            $table->string('sintoma1');
+            $table->string('sintoma2');
+            $table->string('sintoma3');
+            $table->string('presuntivo1');
+            $table->string('presuntivo2');
+            $table->string('presuntivo3');
+            $table->string('definitivo1');
+            $table->string('definitivo2');
+            $table->string('definitivo3');
+            $table->string('medicamento1');
+            $table->string('medicamento2');
+            $table->string('medicamento3');
+            $table->string('medicamento4');
+            $table->string('medicamento5');
+            $table->string('medicamento6');
+            $table->string('dosificacion1');
+            $table->string('dosificacion2');
+            $table->string('dosificacion3');
+            $table->string('dosificacion4');
+            $table->string('dosificacion5');
+            $table->string('dosificacion6');
+            $table->boolean('atendido')->default(false);
             $table->timestamps();
         });
     }

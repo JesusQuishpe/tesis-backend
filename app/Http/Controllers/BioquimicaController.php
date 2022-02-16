@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BioquimicaRequest;
 use App\Models\Bioquimica;
 use App\Models\Doctor;
+use App\Models\Pendiente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class BioquimicaController extends Controller
@@ -25,14 +27,30 @@ class BioquimicaController extends Controller
 
     public function store(BioquimicaRequest $request)
     {
-        $model = Bioquimica::create($request->except(['_token']));
-        return $this->sendResponse($model,'Registro guardado');
+        try {
+            DB::beginTransaction();
+            $validated = $request->validated();
+            $validated['atendido'] = true;
+            $model = Bioquimica::create($validated);
+            $pendiente=Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente=false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage());
+            }
+            return $this->sendError($th->getMessage());
+        }
     }
 
     public function update(BioquimicaRequest $request, Bioquimica $bioquimica)
     {
-        $bioquimica->update($request->except('_token', '_method'));
-        return $this->sendResponse($bioquimica,'Registro actualizado');
+        $bioquimica->update($request->validated());
+        return $this->sendResponse($bioquimica, 'Registro actualizado');
     }
 
     public function destroy(Bioquimica $bioquimica)
@@ -51,5 +69,4 @@ class BioquimicaController extends Controller
         $datos = $model->ultimaCita($request->input('cedula'));
         return response()->json($datos);
     }
-
 }

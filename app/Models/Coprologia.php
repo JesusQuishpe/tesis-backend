@@ -29,7 +29,8 @@ class Coprologia extends Model
         'protozoarios',
         'helmintos',
         'esteatorrea',
-        'observaciones'
+        'observaciones',
+        'atendido'
     ];
     
 

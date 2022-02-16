@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
@@ -47,7 +48,7 @@ class Handler extends ExceptionHandler
         $this->renderable(function (Throwable $e) {
             if($e instanceof NotFoundHttpException){
                 return response()->json([
-                    'message'=>'Registro no encontrado',
+                    'message'=>'Registro no encontrado: '.$e->getMessage(),
                     'status'=>404
                 ],404);
             }
@@ -58,5 +59,20 @@ class Handler extends ExceptionHandler
                 ],404);
             }
         });
+
+        $this->renderable(function (Throwable $e) {
+          if($e instanceof QueryException){
+              return response()->json([
+                'sql_code'=>$e->errorInfo[1],
+                'message'=>$e->errorInfo[2]
+              ],404);
+          }
+
+          if($e instanceof ModelNotFoundException){
+              return response()->json([
+                  'message'=>'Modelo no encontrado'
+              ],404);
+          }
+      });
     }
 }

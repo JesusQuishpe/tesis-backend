@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -51,9 +52,11 @@ class Enfermeria extends Model
                     'citas.created_at'
                 ]
             )
+            ->where('citas.fecha_cita','=',Carbon::now()->format('Y-m-d'))
             ->where('citas.area', '!=', 'Laboratorio')
             ->where('citas.estadisticas', '!=', 'o')
             ->where('enfermeria.atendido', '=', 0)
-            ->paginate(10);
+            ->orderBy('citas.hora_cita','asc')
+            ->get();
     }
 }

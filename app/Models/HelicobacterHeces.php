@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\DB;
 class HelicobacterHeces extends Model
 {
     use HasFactory;
-    use HasFactory;
     protected $table = 'helicobacter_heces';
 
     protected $fillable = [
@@ -17,8 +16,8 @@ class HelicobacterHeces extends Model
         'id_doc',
         'id_tipo',
         'resultado',
-        'observaciones'
-
+        'observaciones',
+        'atendido'
     ];
 
     public function cita()

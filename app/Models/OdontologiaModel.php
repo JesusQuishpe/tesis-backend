@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use JsonSerializable;
 
@@ -141,12 +142,28 @@ class OdontologiaModel implements JsonSerializable
     }
     public function getPacientesEnEspera()
     {
-        return DB::select('SELECT o.id_odo as idOdo,e.ide,i.num,i.cedula,i.nombres,i.apellidos,i.sexo 
+        return Enfermeria::join('citas','enfermeria.id_cita','citas.id')
+        ->join('pacientes','citas.id_paciente','pacientes.id')
+        ->select([
+            'enfermeria.id as id_enfermeria',
+            'pacientes.cedula',
+            'pacientes.nombre_completo',
+            'citas.fecha_cita',
+            'citas.hora_cita',
+            'citas.id as id_cita'
+        ])
+        ->where('enfermeria.atendido','=',true)
+        ->where('citas.atendido','=',false)
+        ->where('citas.area', '=', 'Odontologia')
+        ->where('citas.fecha_cita', '=', Carbon::now()->format('Y-m-d'))
+        ->orderBy('citas.hora_cita')
+        ->get();
+        /*return DB::select('SELECT o.id_odo as idOdo,e.ide,i.num,i.cedula,i.nombres,i.apellidos,i.sexo 
         from odontologia o 
         inner join enfermeria e on e.ide=o.id_enf 
         inner join citas c on c.id=e.id
         inner join ingresar i on i.num=c.num 
-        where o.atendido=0 and c.estadisticas!=?', ['Odontologia','o']); //Modificar la consulta para que sea con la fecha actual
+        where o.atendido=0 and c.estadisticas!=?', ['Odontologia','o']);*/ //Modificar la consulta para que sea con la fecha actual
     }
 
     public function jsonSerialize()

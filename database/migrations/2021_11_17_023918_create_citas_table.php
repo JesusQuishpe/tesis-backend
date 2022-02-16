@@ -20,11 +20,12 @@ class CreateCitasTable extends Migration
             $table->string('cedula_cita',10);
             $table->string('area',25);
             $table->decimal('valor',10,2);
-            $table->string('factura_cita',15);
-            $table->string('estado_cita',20);
+            $table->string('factura_cita',15)->nullable()->default(null);
+            $table->string('estado_cita',20)->nullable()->default(null);
             $table->unsignedBigInteger('id_paciente');
             $table->foreign('id_paciente')->references('id')->on('pacientes');
-            $table->string('estadisticas',15);
+            $table->string('estadisticas',15)->nullable()->default(null);
+            $table->boolean('atendido')->default(false);
             $table->timestamps();
         });
     }

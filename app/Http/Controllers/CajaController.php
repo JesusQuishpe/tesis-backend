@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CajaRequest;
+use App\Models\Bioquimica;
 use App\Models\Cita;
 use App\Models\Enfermeria;
 use App\Models\Paciente;
+use App\Models\Pendiente;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,6 +45,7 @@ class CajaController extends Controller
         try {
             DB::beginTransaction();
             $paraEnfermeria = ['Medicina', 'Odontologia'];
+
             $pac = Paciente::where('cedula', '=', $request->cedula)->first();
             $fecha = Carbon::now()->format('Y-m-d');
             $hora = Carbon::now()->format('H:i:s');
@@ -78,6 +81,23 @@ class CajaController extends Controller
                 $enfermeria = new Enfermeria();
                 $enfermeria->id_cita = $cita->id;
                 $enfermeria->save();
+            }
+
+            if (count($request->input('examenes'))>0) {
+                $examenes=$request->input('examenes');
+                foreach ($examenes as $examen) {
+                    /*DB::table($examen['tablename'])->insert([
+                        'id_cita'=>$cita->id,
+                        'id_tipo'=>$examen['id_tipo'],
+                        'atendido'=>false,
+                    ]);*/
+                    Pendiente::create([
+                        'id_cita'=>$cita->id,
+                        'id_tipo'=>$examen['id_tipo'],
+                        'tablename_tipo'=>$examen['tablename'],
+                        'pendiente'=>true,
+                    ]);
+                }
             }
 
             DB::commit();

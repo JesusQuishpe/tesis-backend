@@ -16,8 +16,8 @@ class Hemoglobina extends Model
         'id_doc',
         'id_tipo',
         'resultado',
-        'observaciones'
-
+        'observaciones',
+        'atendido'
     ];
 
     public function cita()

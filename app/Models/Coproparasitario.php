@@ -26,8 +26,8 @@ class Coproparasitario extends Model
         'ascaris_lumbricoides',
         'strongyloides_stercolarie',
         'oxiuros',
-        'observaciones'
-
+        'observaciones',
+        'atendido'
     ];
 
 

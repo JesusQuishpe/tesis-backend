@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CoproparasitarioRequest;
 use App\Models\Coproparasitario;
 use App\Models\Doctor;
+use App\Models\Pendiente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CoproparasitarioController extends Controller
 {
@@ -30,13 +32,29 @@ class CoproparasitarioController extends Controller
 
     public function store(CoproparasitarioRequest $request)
     {
-        $model = Coproparasitario::create($request->except(['_token']));
-        return $this->sendResponse($model, 'Registro guardado');
+        try {
+            DB::beginTransaction();
+            $validated = $request->validated();
+            $validated['atendido'] = true;
+            $model = Coproparasitario::create($validated);
+            $pendiente=Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente=false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage());
+            }
+            return $this->sendError($th->getMessage());
+        }
     }
 
     public function update(CoproparasitarioRequest $request, Coproparasitario $coproparasitario)
     {
-        $coproparasitario->update($request->except('_token', '_method'));
+        $coproparasitario->update($request->validated());
         return $this->sendResponse($coproparasitario, 'Registro actualizado');
     }
 

@@ -18,6 +18,7 @@ class CreateDoctoresTable extends Migration
             $table->string('cedula',10)->unique();
             $table->string('nombres',50);
             $table->string('apellidos',50);
+            $table->string('nombre_completo',100);
             $table->string('area',100);
             $table->timestamps();
         });

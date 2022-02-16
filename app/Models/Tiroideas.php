@@ -18,8 +18,8 @@ class Tiroideas extends Model
         't3',
         't4',
         'tsh',
-        'observaciones'
-
+        'observaciones',
+        'atendido'
     ];
 
 

@@ -4,32 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\HelicobacterHeces;
+use App\Models\Pendiente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class HelicobacterHecesController extends Controller
 {
     //
     public function index()
     {
-        return view('laboratorio.index');
-    }
-
-    public function nuevo(Request $request)
-    {
-        $model=new HelicobacterHeces();
-        $doctores=Doctor::all();
-        if($request->has('texto')){
-            $texto=$request->query('texto');
-            $ultimaCita=$model->ultimaCita($texto);
-            return view('laboratorio.helicobacterHeces.nuevo',compact('doctores','ultimaCita','texto'));
-        }
         
-        return view('laboratorio.helicobacterHeces.nuevo',compact('doctores'));
     }
 
-    private function validateRequest(Request $request)
+    public function validateExamenHeces(Request $request)
     {
-        $validated = $request->validate([
+        return Validator::make($request->all(), [
             'id_cita'=>'required|numeric',
             'id_doc'=>'required|numeric',
             'id_tipo'=>'required|numeric',
@@ -38,51 +28,39 @@ class HelicobacterHecesController extends Controller
         ]);
     }
 
-    public function guardar(Request $request)
+    public function store(Request $request)
     {
-        $this->validateRequest($request);
-        $model = HelicobacterHeces::create($request->except(['_token']));
-        $model->save();
-        return redirect()->route('helicobacterHeces.nuevo');
+        try {
+            $validator = $this->validateExamenHeces($request);
+            if (count($validator->errors()) > 0) {
+                return $this->sendError('Errores', $validator->errors());
+            }
+            DB::beginTransaction();
+            $validated = $validator->validated();
+            $validated['atendido'] = true;
+            $model = HelicobacterHeces::create($validated);
+            $pendiente = Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente = false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage(),$validated);
+            }
+            return $this->sendError($th->getMessage(),$validated);
+        }
     }
 
-    public function update(Request $request, $id_helicobacterHeces)
+    public function update(Request $request, HelicobacterHeces $hece)
     {
-        $this->validateRequest($request);
-        $helicobacterHeces = HelicobacterHeces::find($id_helicobacterHeces);
-        $helicobacterHeces->update($request->except(['_token', '_method']));
-        return redirect()->route('helicobacterHeces.editar');
-    }
-
-
-    public function editar(Request $request)
-    {
-        $model=new HelicobacterHeces();
-        $texto=$request->query('texto','');
-        $datos=$model->buscar($texto);
-        return view('laboratorio.helicobacterHeces.editar',compact('texto','datos'));
-    }
-    
-    public function edit($id_helicobacterHeces)
-    {
-        $helicobacterHeces = HelicobacterHeces::find($id_helicobacterHeces);
-        if ($helicobacterHeces == null)
-            return abort(404);
-        $doctores = Doctor::all();
-        return view('laboratorio.helicobacterHeces.edit', ['helicobacterHeces' => $helicobacterHeces, 'doctores' => $doctores]);
-    }
-
-    public function delete($id_helicobacterHeces)
-    {
-        $helicobacterHeces = HelicobacterHeces::find($id_helicobacterHeces);
-        if ($helicobacterHeces == null)
-            return abort(404);
-        $helicobacterHeces->delete();
-        return redirect()->route('helicobacterHeces.editar');
-    }
-
-    public function todos()
-    {
-        return view('laboratorio.helicobacterHeces.eliminar');
+        $validator = $this->validateExamenHeces($request);
+        if (count($validator->errors()) > 0) {
+            return $this->sendError('Error en la petición', $validator->errors());
+        }
+        $hece->update($validator->validated());
+        return $this->sendResponse($hece, 'Registro actualizado');
     }
 }

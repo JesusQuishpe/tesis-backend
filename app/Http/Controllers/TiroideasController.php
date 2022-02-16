@@ -3,33 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Models\Doctor;
+use App\Models\Pendiente;
 use App\Models\Tiroideas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class TiroideasController extends Controller
 {
     //
     public function index()
     {
-        return view('laboratorio.index');
-    }
-
-    public function nuevo(Request $request)
-    {
-        $model=new Tiroideas();
-        $doctores=Doctor::all();
-        if($request->has('texto')){
-            $texto=$request->query('texto');
-            $ultimaCita=$model->ultimaCita($texto);
-            return view('laboratorio.tiroideas.nuevo',compact('doctores','ultimaCita','texto'));
-        }
         
-        return view('laboratorio.tiroideas.nuevo',compact('doctores'));
     }
 
-    private function validateRequest(Request $request)
+    public function validateExamenTiroideas(Request $request)
     {
-        $validated = $request->validate([
+        return Validator::make($request->all(), [
             'id_cita' => 'required|numeric',
             'id_doc' => 'required|numeric',
             'id_tipo' => 'required|numeric',
@@ -40,50 +30,39 @@ class TiroideasController extends Controller
         ]);
     }
 
-    public function guardar(Request $request)
+    public function store(Request $request)
     {
-        $this->validateRequest($request);
-        $model = Tiroideas::create($request->except(['_token']));
-        $model->save();
-        return redirect()->route('tiroideas.nuevo');
+        try {
+            $validator = $this->validateExamenTiroideas($request);
+            DB::beginTransaction();
+            if (count($validator->errors()) > 0) {
+                return $this->sendError('Errores', $validator->errors());
+            }
+            $validated = $validator->validated();
+            $validated['atendido'] = true;
+            $model = Tiroideas::create($validated);
+            $pendiente = Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente = false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage());
+            }
+            return $this->sendError($th->getMessage());
+        }
     }
 
-    public function update(Request $request, $id_tiroideas)
+    public function update(Request $request, Tiroideas $tiroidea)
     {
-        $this->validateRequest($request);
-        $tiroideas = Tiroideas::find($id_tiroideas);
-        $tiroideas->update($request->except(['_token', '_method']));
-        return redirect()->route('tiroideas.editar');
-    }
-
-
-    public function editar(Request $request)
-    {
-        $model=new Tiroideas();
-        $texto=$request->query('texto','');
-        $datos=$model->buscar($texto);
-        return view('laboratorio.tiroideas.editar',compact('texto','datos'));
-    }
-    public function edit($id_tiroideas)
-    {
-        $tiroideas = Tiroideas::find($id_tiroideas);
-        if ($tiroideas == null)
-            return abort(404);
-        $doctores = Doctor::all();
-        return view('laboratorio.tiroideas.edit', ['tiroideas' => $tiroideas, 'doctores' => $doctores]);
-    }
-
-    public function delete($id_tiroideas)
-    {
-        $tiroideas = Tiroideas::find($id_tiroideas);
-        if ($tiroideas == null)
-            return abort(404);
-        $tiroideas->delete();
-        return redirect()->route('tiroideas.editar');
-    }
-
-    public function todos()
-    {
-        return view('laboratorio.tiroideas.eliminar');
+        $validator = $this->validateExamenTiroideas($request);
+        if (count($validator->errors()) > 0) {
+            return $this->sendError('Error en la petición', $validator->errors());
+        }
+        $tiroidea->update($validator->validated());
+        return $this->sendResponse($tiroidea, 'Registro actualizado');
     }
 }

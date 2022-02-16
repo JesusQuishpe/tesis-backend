@@ -49,7 +49,8 @@ class Bioquimica extends Model
         'fosfatasa_alcalina_ninos',
         'amilasa',
         'lipasa',
-        'observaciones'
+        'observaciones',
+        'atendido'
     ];
 
 

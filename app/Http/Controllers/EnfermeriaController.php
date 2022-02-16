@@ -38,7 +38,7 @@ class EnfermeriaController extends Controller
         unset($dataToUpdate['id_enfermeria']);//Eliminamos el id_enfermeria, porque no debe actualizarse
         $dataToUpdate['atendido'] = true;
         $id_enfermeria = $request->input('id_enfermeria');
-        $result = Enfermeria::where('id', '=', $id_enfermeria);
+        $result = Enfermeria::find($id_enfermeria);
         $result->update($dataToUpdate);
         return $this->sendResponse($result, 'Registro guardado');
     }

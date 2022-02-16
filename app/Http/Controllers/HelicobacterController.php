@@ -4,32 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\Doctor;
 use App\Models\Helicobacter;
+use App\Models\Pendiente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class HelicobacterController extends Controller
 {
     //
+    
     public function index()
     {
-        return view('laboratorio.index');
-    }
-
-    public function nuevo(Request $request)
-    {
-        $model=new Helicobacter();
-        $doctores=Doctor::all();
-        if($request->has('texto')){
-            $texto=$request->query('texto');
-            $ultimaCita=$model->ultimaCita($texto);
-            return view('laboratorio.helicobacter.nuevo',compact('doctores','ultimaCita','texto'));
-        }
         
-        return view('laboratorio.helicobacter.nuevo',compact('doctores'));
     }
 
-    private function validateRequest(Request $request)
+    public function validateExamenHelycobacter(Request $request)
     {
-        $validated = $request->validate([
+        return Validator::make($request->all(), [
             'id_cita'=>'required|numeric',
             'id_doc'=>'required|numeric',
             'id_tipo'=>'required|numeric',
@@ -38,50 +29,39 @@ class HelicobacterController extends Controller
         ]);
     }
 
-    public function guardar(Request $request)
+    public function store(Request $request)
     {
-        $this->validateRequest($request);
-        $model = Helicobacter::create($request->except(['_token']));
-        $model->save();
-        return redirect()->route('helicobacter.nuevo');
+        try {
+            $validator = $this->validateExamenHelycobacter($request);
+            if (count($validator->errors()) > 0) {
+                return $this->sendError('Errores', $validator->errors());
+            }
+            DB::beginTransaction();
+            $validated = $validator->validated();
+            $validated['atendido'] = true;
+            $model = Helicobacter::create($validated);
+            $pendiente = Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente = false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage(),$validated);
+            }
+            return $this->sendError($th->getMessage(),$validated);
+        }
     }
 
-    public function update(Request $request, $id_helicobacter)
+    public function update(Request $request, Helicobacter $helycobactere)
     {
-        $this->validateRequest($request);
-        $helicobacter = Helicobacter::find($id_helicobacter);
-        $helicobacter->update($request->except(['_token', '_method']));
-        return redirect()->route('helicobacter.editar');
-    }
-
-
-    public function editar(Request $request)
-    {
-        $model=new Helicobacter();
-        $texto=$request->query('texto','');
-        $datos=$model->buscar($texto);
-        return view('laboratorio.helicobacter.editar',compact('texto','datos'));
-    }
-    public function edit($id_helicobacter)
-    {
-        $helicobacter = Helicobacter::find($id_helicobacter);
-        if ($helicobacter == null)
-            return abort(404);
-        $doctores = Doctor::all();
-        return view('laboratorio.helicobacter.edit', ['helicobacter' => $helicobacter, 'doctores' => $doctores]);
-    }
-
-    public function delete($id_helicobacter)
-    {
-        $helicobacter = Helicobacter::find($id_helicobacter);
-        if ($helicobacter == null)
-            return abort(404);
-        $helicobacter->delete();
-        return redirect()->route('helicobacter.editar');
-    }
-
-    public function todos()
-    {
-        return view('laboratorio.helicobacter.eliminar');
+        $validator = $this->validateExamenHelycobacter($request);
+        if (count($validator->errors()) > 0) {
+            return $this->sendError('Error en la petición', $validator->errors());
+        }
+        $helycobactere->update($validator->validated());
+        return $this->sendResponse($helycobactere, 'Registro actualizado');
     }
 }

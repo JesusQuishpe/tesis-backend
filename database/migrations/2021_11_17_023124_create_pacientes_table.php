@@ -19,16 +19,16 @@ class CreatePacientesTable extends Migration
             $table->string('cedula',10)->unique();
             $table->string('apellidos',50);
             $table->string('nombres',50);
-            $table->string('nombre_completo',100);
+            $table->string('nombre_completo',100)->unique();
             $table->string('fecha_nacimiento',12);
             $table->string('sexo',10);
             $table->string('telefono',20);
             $table->string('domicilio',150);
             $table->string('provincia',50);
             $table->string('ciudad',50);
-            $table->string('historial',10)->nullable();
-            $table->string('fecha_historial',10)->nullable();
-            $table->string('estadisticas',1)->nullable();
+            $table->string('historial',10)->nullable()->default(null);
+            $table->string('fecha_historial',10)->nullable()->default(null);
+            $table->string('estadisticas',1)->nullable()->default(null);
             $table->timestamps();
         });
     }

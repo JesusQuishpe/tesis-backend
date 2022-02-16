@@ -39,8 +39,8 @@ class ExamenOrina extends Model
         'cristales',
         'cilindros',
         'piocitos',
-        'observaciones'
-
+        'observaciones',
+        'atendido'
     ];
 
 

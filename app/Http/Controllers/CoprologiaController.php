@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CoprologiaRequest;
 use App\Models\Coprologia;
 use App\Models\Doctor;
+use App\Models\Pendiente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CoprologiaController extends Controller
 {
@@ -30,13 +32,29 @@ class CoprologiaController extends Controller
 
     public function store(CoprologiaRequest $request)
     {
-        $model = Coprologia::create($request->except(['_token']));
-        return $this->sendResponse($model, 'Registro guardado');
+        try {
+            DB::beginTransaction();
+            $validated = $request->validated();
+            $validated['atendido'] = true;
+            $model = Coprologia::create($validated);
+            $pendiente=Pendiente::find($request->input('id_pendiente'));
+            $pendiente->pendiente=false;
+            $pendiente->save();
+            DB::commit();
+            return $this->sendResponse($model, 'Registro guardado');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                return $this->sendError($th->getMessage());
+            }
+            return $this->sendError($th->getMessage());
+        }
     }
 
     public function update(CoprologiaRequest $request, Coprologia $coprologia)
     {
-        $coprologia->update($request->except('_token', '_method'));
+        $coprologia->update($request->validated());
         return $this->sendResponse($coprologia, 'Registro actualizado');
     }
 

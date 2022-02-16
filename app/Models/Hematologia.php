@@ -30,7 +30,8 @@ class Hematologia extends Model
         't_protombina_tp',
         't_parcial_de_tromboplastine',
         'fibrinogeno',
-        'observaciones'
+        'observaciones',
+        'atendido'
 
     ];
 

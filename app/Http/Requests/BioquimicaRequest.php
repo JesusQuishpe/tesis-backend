@@ -61,7 +61,7 @@ class BioquimicaRequest extends FormRequest
             'fosfatasa_alcalina_ninos'=>'required|numeric',
             'amilasa'=>'required|numeric',
             'lipasa'=>'required|numeric',
-            'observaciones'=>'required'
+            'observaciones'=>'required',
         ];
     }
 }

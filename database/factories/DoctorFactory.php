@@ -13,10 +13,14 @@ class DoctorFactory extends Factory
      */
     public function definition()
     {
+        $name=$this->faker->name();
+        $lastname=$this->faker->lastName();
+        $fullname=$name.' '.$lastname;
         return [
             'cedula'=>$this->faker->isbn10(),
-            'nombres'=>$this->faker->name(),
-            'apellidos'=>$this->faker->lastName(),
+            'nombres'=>$name,
+            'apellidos'=>$lastname,
+            'nombre_completo'=>$fullname,
             'area'=>$this->faker->randomElement(['Laboratorio','Odontología','Enfermería'])
         ];
     }
