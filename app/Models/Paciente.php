@@ -33,9 +33,9 @@ class Paciente extends Model
     ];
 
     /**
-     * Busca todos los pacientes que coincidan con 
+     * Busca todos los pacientes que coincidan con
      * el apellido o la cedula
-     * @param string $texto cedula 
+     * @param string $texto cedula
      */
     public function buscarPorCedula($query)
     {
@@ -44,7 +44,7 @@ class Paciente extends Model
     }
 
     /**
-     * Busca todos los pacientes que coincidan con 
+     * Busca todos los pacientes que coincidan con
      * el apellido o la cedula
      * @param string $texto cedula o apellidos del paciente
      */

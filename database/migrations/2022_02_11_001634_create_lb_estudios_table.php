@@ -21,7 +21,8 @@ class CreateLbEstudiosTable extends Migration
             $table->unsignedBigInteger('id_unidad')->nullable();
             $table->foreign('id_unidad')->references('id')->on('lb_unidades');
             $table->string('valor_referencia')->default("");
-            $table->string('indicaciones');
+            $table->string('indicaciones')->default("");
+            $table->float('costo')->default(0.00);
             $table->timestamps();
         });
     }

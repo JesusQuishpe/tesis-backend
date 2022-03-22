@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Examen;
 use App\Models\ExamenEstudio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,13 +37,16 @@ class ExamenEstudioController extends Controller
           $examenEstudio->id_estudio=$estudio['id'];
           $examenEstudio->save();
         }
+        $examen=Examen::find($id_examen);
+        $examen->tieneEstudios=true;
+        $examen->save();
         DB::commit();
         return $this->sendResponse([],'Estudios asignados correctamente');
       } catch (\Throwable $th) {
         DB::rollBack();
         return $this->sendError($th->getMessage());
       }
-      
+
     }
 
     /**

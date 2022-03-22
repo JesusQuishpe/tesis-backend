@@ -1,6 +1,7 @@
 <?php
 
 use App\Actions\JsonApiAuth\AuthKit;
+use App\Http\Controllers\AreaController;
 use App\Http\Controllers\BioquimicaController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CitaController;
@@ -14,6 +15,7 @@ use App\Http\Controllers\EstudioController;
 use App\Http\Controllers\ExamenController;
 use App\Http\Controllers\ExamenEstudioController;
 use App\Http\Controllers\ExamenOrinaController;
+use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\HelicobacterController;
 use App\Http\Controllers\HelicobacterHecesController;
 use App\Http\Controllers\HematologiaController;
@@ -25,6 +27,7 @@ use App\Http\Controllers\OdontologiaController;
 use App\Http\Controllers\OperacionController;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\PendienteController;
+use App\Http\Controllers\PruebaController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SimbologiaController;
 use App\Http\Controllers\TipoExamenController;
@@ -50,6 +53,8 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 Route::post('login',[UserController::class,'login']);
+Route::post('laboratorio/crearConsulta',[LaboratorioController::class,'crearConsulta']);
+Route::get('laboratorio/pendientes',[LaboratorioController::class,'pendientes']);
 Route::post('asignaciones',[ExamenEstudioController::class,'store']);
 Route::apiResource('users',UserController::class);
 Route::post("caja",[CajaController::class,'store']);
@@ -61,7 +66,7 @@ Route::get('odontologia/resultado/{id_cita}',[OdontologiaController::class,'resu
 Route::post('permisos',[ModuloController::class,'addRolModule']);
 
 Route::get('permisos',[UserController::class,'permisos']);
-
+Route::get('laboratorio/cita/{cedula}',[LaboratorioController::class,'getCitaPorCedula']);
 Route::apiResource('roles',RolController::class);
 Route::apiResource('modulos',ModuloController::class);
 Route::apiResource('operaciones',OperacionController::class);
@@ -70,9 +75,12 @@ Route::apiResource('pacientes',PacienteController::class);
 Route::apiResource('tipos',TipoExamenController::class)->parameters(['tipos'=>'tipoExamen']);
 Route::apiResource('unidades',UnidadController::class)->parameters(['unidades'=>'unidad']);
 Route::apiResource('titulos',TituloController::class)->parameters(['titulos'=>'titulo']);
+Route::apiResource('areas',AreaController::class)->parameters(['areas'=>'lbArea']);
+Route::apiResource('pruebas',PruebaController::class)->parameters(['pruebas'=>'lbPrueba']);
+Route::apiResource('grupos',GrupoController::class)->parameters(['grupos'=>'lbGrupo']);
+//Route::apiResource('estudios',EstudioController::class)->parameters(['estudios'=>'estudio']);
 Route::get('examenes/estudios',[ExamenController::class,'examenEstudios']);
 Route::apiResource('examenes',ExamenController::class)->parameters(['examenes'=>'examen']);
-Route::apiResource('estudios',EstudioController::class)->parameters(['estudios'=>'estudio']);
 
 
 Route::apiResource('bioquimicas',BioquimicaController::class);
@@ -86,15 +94,15 @@ Route::apiResource('hemoglobinas',HemoglobinaController::class);
 Route::apiResource('embarazos',EmbarazoController::class);
 Route::apiResource('tiroideas',TiroideasController::class);
 
+Route::get('enfermeria/pacientes',[EnfermeriaController::class,'pacientes']);
 Route::apiResource('doctores',DoctorController::class);
-Route::apiResource('pendientes',PendienteController::class);
+//Route::apiResource('pendientes',PendienteController::class);
 Route::apiResource('medicina',MedicinaController::class);
 Route::apiResource('enfermerias',EnfermeriaController::class);
 
 Route::delete('eliminarCitaPendiente/{id_cita}',[LaboratorioController::class,'eliminarCitaPendiente']);
 Route::post('eliminarHistoria',[LaboratorioController::class,'eliminarHistoriaClinica']);
 
-Route::get('enfermeria/pacientes',[EnfermeriaController::class,'pacientes']);
 
 Route::get('tiposExamen',[TipoExamenController::class,'index']);
 Route::get('examenPorTipo',[LaboratorioController::class,'examenPorTipo']);

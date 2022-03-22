@@ -20,6 +20,7 @@ class Estudio extends Model
   }
   public function children()
   {
-    return $this->hasManyThrough(Estudio::class,EstudioDetalle::class,'id_estudio_padre','id');
+    return $this
+    ->belongsToMany(Estudio::class,"lb_estudios_det",'id_estudio_padre','id_estudio_hijo');
   }
 }

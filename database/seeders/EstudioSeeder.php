@@ -508,5 +508,104 @@ class EstudioSeeder extends Seeder
     $estudio->valor_referencia = "I";
     $estudio->indicaciones = "";
     $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "PRO";
+    $estudio->nombre = "PROTOZOARIOS";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "AMEBA HIS";
+    $estudio->nombre = "AMEBA HISTOLITICA";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "AMEBA COLI";
+    $estudio->nombre = "AMEBA COLI";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "GIARDIALAM";
+    $estudio->nombre = "GIARDIA LAMBLIA";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "TRICHOMONA";
+    $estudio->nombre = "TRICHOMONA HOMINIS";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "CHILOMASTIK";
+    $estudio->nombre = "CHILOMASTIK MESNILE";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "HELMIN";
+    $estudio->nombre = "HELMINTOS";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "TRICHURIS";
+    $estudio->nombre = "TRICHURIS TRICHURA";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "ASCARIS";
+    $estudio->nombre = "ASCARIS LUMBRICOIDES";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "STRONGY";
+    $estudio->nombre = "STRONGYLOIDES STERCOLARIE";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
+
+    $estudio = new Estudio();
+    $estudio->clave = "OXIUROS";
+    $estudio->nombre = "OXIUROS";
+    $estudio->es_individual = true;
+    $estudio->id_unidad = null;
+    $estudio->valor_referencia = "I";
+    $estudio->indicaciones = "";
+    $estudio->save();
   }
 }

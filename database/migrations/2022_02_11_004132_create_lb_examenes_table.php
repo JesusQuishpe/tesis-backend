@@ -20,7 +20,8 @@ class CreateLbExamenesTable extends Migration
             //$table->unsignedBigInteger('id_tipo');
             //$table->foreign('id_tipo')->references('id')->on('lb_tipo_examen');
             $table->string('nombre');
-            $table->float('costo')->default(0);
+            $table->boolean('tieneEstudios')->default(false);
+            $table->float('costo')->default(0.00);
             $table->timestamps();
         });
     }

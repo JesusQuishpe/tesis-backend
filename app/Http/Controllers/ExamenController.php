@@ -18,9 +18,9 @@ class ExamenController extends Controller
   public function index(Request $request)
   {
     //Devuelve solo los examenes tipo parametro y perfil
-    if($request->has('asignacion') && $request->boolean('asignacion')){
-      $examenes=Examen::where('id_tipo','!=',1)->get();//Diferente del tipo individual
-      return $this->sendResponse($examenes,'Examenes por parametro y perfil');
+    if($request->has('sinEstudios') && $request->boolean('sinEstudios')){
+      $examenes=Examen::where('tieneEstudios','!=',1)->get();//Diferente del tipo individual
+      return $this->sendResponse($examenes,'Examenes sin estudios');
     }
     return $this->sendResponse(Examen::all(), 'Examenes');
   }
@@ -91,4 +91,6 @@ class ExamenController extends Controller
     $examen->delete();
     return $this->sendResponse([],'Registro eliminado');
   }
+
+
 }

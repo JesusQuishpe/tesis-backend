@@ -34,7 +34,7 @@ class Enfermeria extends Model
         'atendido'
     ];
 
-    
+
 
     public function enEspera()
     {

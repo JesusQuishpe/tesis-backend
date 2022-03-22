@@ -96,7 +96,27 @@ class CitaController extends Controller
    */
   public function store(Request $request)
   {
-    //
+    $fecha = Carbon::now()->format('Y-m-d');
+    $hora = Carbon::now()->format('H:i:s');
+
+    $cita = Cita::create([
+      'fecha_cita' => $fecha,
+      'hora_cita' => $hora,
+      'cedula_cita' => $request->cedula,
+      'area' => $request->area,
+      'valor' => $request->valor,
+      'factura_cita' => null,
+      'estado_cita' => '',
+      'id_paciente' => $request->id,
+      'estadisticas' => ''
+    ]);
+
+    if($request->area!=='Laboratorio'){
+        $enfermeria=new Enfermeria();
+        $enfermeria->id_cita=$cita->id;
+        $enfermeria->save();
+    }
+    return $this->sendResponse($cita,'Cita creada correctamente');
   }
 
   /**

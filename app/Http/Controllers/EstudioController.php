@@ -38,8 +38,9 @@ class EstudioController extends Controller
       $newEstudio = new Estudio();
       $newEstudio->clave = $request->input('clave');
       $newEstudio->nombre = $request->input('nombre');
-      $newEstudio->indicaciones = $request->input('indicaciones') || "";
+      $newEstudio->indicaciones = $request->input('indicaciones') ?: "";
       $newEstudio->es_individual = $request->boolean('tipo');
+      $newEstudio->costo=$request->input('costo');
       if ($request->input('id_unidad') === "-1") {
         $newEstudio->id_unidad = null;
       } else {
@@ -56,7 +57,7 @@ class EstudioController extends Controller
         }
       }
       DB::commit();
-      return $this->sendResponse($estudio, 'Registro creado');
+      return $this->sendResponse($newEstudio, 'Registro creado');
     } catch (\Throwable $th) {
       DB::rollBack();
       return $this->sendError($th->getMessage());
@@ -85,8 +86,8 @@ class EstudioController extends Controller
   {
     $estudio->clave = $request->input('clave');
     $estudio->nombre = $request->input('nombre');
-    $estudio->indicaciones = $request->input('indicaciones');
-
+    $estudio->indicaciones = $request->input('indicaciones') || "";
+    $estudio->costo = $request->input('costo');
     if ($request->input('id_medida') === "-1") {
       $estudio->id_medida = null;
     } else {

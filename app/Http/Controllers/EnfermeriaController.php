@@ -53,7 +53,7 @@ class EnfermeriaController extends Controller
     {
         $model = new Enfermeria();
         $datos = $model->enEspera();
-        return response()->json($datos);
+        return $this->sendResponse($datos,'Pacientes en espera enfermeria');
     }
 
     public function destroy(Enfermeria $enfermeria)

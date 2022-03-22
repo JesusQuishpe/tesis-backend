@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unidad;
+use App\Models\LbUnidad;
 use Illuminate\Http\Request;
 
 class UnidadController extends Controller
@@ -14,7 +14,7 @@ class UnidadController extends Controller
    */
   public function index()
   {
-    return $this->sendResponse(Unidad::all(), 'Unidads');
+    return $this->sendResponse(LbUnidad::all(), 'Unidades');
   }
 
   /**
@@ -25,7 +25,7 @@ class UnidadController extends Controller
    */
   public function store(Request $request)
   {
-    $unidad = new Unidad();
+    $unidad = new LbUnidad();
     $unidad->nombre = $request->input('nombre');
     $unidad->abreviatura = $request->input('abreviatura');
     $unidad->save();
@@ -38,7 +38,7 @@ class UnidadController extends Controller
    * @param  \App\Models\Unidad  $unidad
    * @return \Illuminate\Http\Response
    */
-  public function show(Unidad $unidad)
+  public function show(LbUnidad $unidad)
   {
     return $this->sendResponse($unidad, 'Unidad');
   }
@@ -50,7 +50,7 @@ class UnidadController extends Controller
    * @param  \App\Models\Unidad  $unidad
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, Unidad $unidad)
+  public function update(Request $request, LbUnidad $unidad)
   {
     $unidad->nombre = $request->input('nombre');
     $unidad->abreviatura = $request->input('abreviatura');
@@ -64,7 +64,7 @@ class UnidadController extends Controller
    * @param  \App\Models\Unidad  $unidad
    * @return \Illuminate\Http\Response
    */
-  public function destroy(Unidad $unidad)
+  public function destroy(LbUnidad $unidad)
   {
     $unidad->delete();
     return $this->sendResponse([], 'Registro eliminado');

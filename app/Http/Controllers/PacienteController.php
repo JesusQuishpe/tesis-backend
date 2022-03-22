@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Paciente;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PacienteController extends Controller
 {
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -16,18 +17,18 @@ class PacienteController extends Controller
     public function index(Request $request)
     {
         //Buscar paciente por cedula o nombre completo
-        if($request->has('cedula')){
-            $model=new Paciente();
-            $paciente=$model->buscarPorCedula($request->input('cedula'));
+        if ($request->has('cedula')) {
+            $model = new Paciente();
+            $paciente = $model->buscarPorCedula($request->input('cedula'));
             return response()->json($paciente);
         }
 
-        if($request->has('query')){
-            $model=new Paciente();
-            $paciente=$model->buscarPorCedulaOApellidos($request->input('query'));
+        if ($request->has('query')) {
+            $model = new Paciente();
+            $paciente = $model->buscarPorCedulaOApellidos($request->input('query'));
             return response()->json($paciente);
         }
-        return response()->json(Paciente::all());
+        return $this->sendResponse(Paciente::all(), 'Pacientes');
     }
 
     /**
@@ -38,7 +39,23 @@ class PacienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $fecha = Carbon::now()->format('Y-m-d');
+        //$hora = Carbon::now()->format('H:i:s');
+
+        $data = $request->only(
+            [
+                'cedula', 'apellidos', 'nombres',
+                'fecha_nacimiento', 'sexo', 'telefono',
+                'domicilio', 'provincia',
+                'ciudad'
+            ]
+        );
+
+        $data['fecha'] = $fecha;
+        $data['nombre_completo'] = $data['nombres'] . ' ' . $data['apellidos'];
+        $pac = Paciente::create($data);
+        $pac->save();
+        return $this->sendResponse($pac, 'Paciente creado correctamente');
     }
 
     /**
@@ -49,7 +66,7 @@ class PacienteController extends Controller
      */
     public function show(Paciente $paciente)
     {
-        //
+        return $this->sendResponse($paciente, 'Paciente por id');
     }
 
     /**
@@ -61,7 +78,20 @@ class PacienteController extends Controller
      */
     public function update(Request $request, Paciente $paciente)
     {
-        //
+        $fecha = Carbon::now()->format('Y-m-d');
+        //$hora = Carbon::now()->format('H:i:s');
+        $data = $request->only(
+            [
+                'cedula', 'apellidos', 'nombres',
+                'fecha_nacimiento', 'sexo', 'telefono',
+                'domicilio', 'provincia',
+                'ciudad'
+            ]
+        );
+        $data['fecha'] = $fecha;
+        $data['nombre_completo'] = $data['nombres'] . ' ' . $data['apellidos'];
+        $paciente->update($data);
+        return $this->sendResponse($paciente, 'Paciente actualizado correctamente');
     }
 
     /**

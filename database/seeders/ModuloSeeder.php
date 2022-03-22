@@ -63,25 +63,25 @@ class ModuloSeeder extends Seeder
         $modulo->save();
 
         //Submodulos de caja
-        /*$modulo=new Modulo();
-        $modulo->nombre='Nueva cita';
+        $modulo=new Modulo();
+        $modulo->nombre='Listado de citas';
         $modulo->id_parent=1;
         $modulo->enable=true;
         $modulo->canDelete=false;
-        $modulo->path='/caja/nuevo';
+        $modulo->path='/citas';
         $modulo->save();
 
         $modulo=new Modulo();
-        $modulo->nombre='Cambios';
+        $modulo->nombre='Listado de pacientes';
         $modulo->id_parent=1;
         $modulo->enable=true;
         $modulo->canDelete=false;
-        $modulo->path='/caja/cambios';
+        $modulo->path='/pacientes';
         $modulo->save();
 
 
 
-        Submodulos de medicina
+        /*Submodulos de medicina
         $modulo=new Modulo();
         $modulo->nombre='En espera';
         $modulo->id_parent=3;
@@ -124,39 +124,63 @@ class ModuloSeeder extends Seeder
         $modulo->path='/unidades';
         $modulo->save();
 
-        $modulo=new Modulo();
-        $modulo->nombre='Titulos';
-        $modulo->id_parent=5;
-        $modulo->enable=true;
-        $modulo->canDelete=false;
-        $modulo->path='/titulos';
-        $modulo->save();
-
-
-        $modulo=new Modulo();
+        /*$modulo=new Modulo();
         $modulo->nombre='Examenes';
         $modulo->id_parent=5;
         $modulo->enable=true;
         $modulo->canDelete=false;
         $modulo->path='/examenes';
-        $modulo->save();
+        $modulo->save();*/
 
         $modulo=new Modulo();
-        $modulo->nombre='Estudios';
+        $modulo->nombre='Areas';
         $modulo->id_parent=5;
         $modulo->enable=true;
         $modulo->canDelete=false;
-        $modulo->path='/estudios';
+        $modulo->path='/areas';
         $modulo->save();
-        
+
         $modulo=new Modulo();
+        $modulo->nombre='Grupos';
+        $modulo->id_parent=5;
+        $modulo->enable=true;
+        $modulo->canDelete=false;
+        $modulo->path='/grupos';
+        $modulo->save();
+
+        $modulo=new Modulo();
+        $modulo->nombre='Pruebas';
+        $modulo->id_parent=5;
+        $modulo->enable=true;
+        $modulo->canDelete=false;
+        $modulo->path='/pruebas';
+        $modulo->save();
+
+        /*$modulo=new Modulo();
         $modulo->nombre='Asignar estudios a examen';
         $modulo->id_parent=5;
         $modulo->enable=true;
         $modulo->canDelete=false;
         $modulo->path='/asignacion';
+        $modulo->save();*/
+
+
+        $modulo=new Modulo();
+        $modulo->nombre='Nueva consulta';
+        $modulo->id_parent=5;
+        $modulo->enable=true;
+        $modulo->canDelete=false;
+        $modulo->path='/nueva-consulta';
         $modulo->save();
-        
+
+        $modulo=new Modulo();
+        $modulo->nombre='Captura de resultados';
+        $modulo->id_parent=5;
+        $modulo->enable=true;
+        $modulo->canDelete=false;
+        $modulo->path='/captura';
+        $modulo->save();
+
         //Submodulos mantenimiento
         $modulo=new Modulo();
         $modulo->nombre='Roles';

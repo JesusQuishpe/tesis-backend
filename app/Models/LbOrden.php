@@ -5,8 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Unidad extends Model
+class LbOrden extends Model
 {
     use HasFactory;
-    protected $table='lb_unidades';
 }
