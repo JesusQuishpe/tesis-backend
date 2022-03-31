@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CapturaResultado extends Model
+class LbCapturaPrueba extends Model
 {
     use HasFactory;
-    protected $table='lb_captura_resultados';
+    protected $table='lb_captura_pruebas';
 }

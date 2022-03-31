@@ -17,6 +17,8 @@ class CreateLbCapturasTable extends Migration
             $table->id();
             $table->unsignedBigInteger('id_orden');
             $table->foreign('id_orden')->references('id')->on('lb_ordenes');
+            $table->string('fecha',12);
+            $table->string('hora',8);
             //IdDoctor
             $table->timestamps();
         });
@@ -29,6 +31,6 @@ class CreateLbCapturasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lb_captura');
+        Schema::dropIfExists('lb_capturas');
     }
 }

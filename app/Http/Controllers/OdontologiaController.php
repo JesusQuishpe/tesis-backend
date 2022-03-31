@@ -6,6 +6,7 @@ use App\Models\Antecedente;
 use App\Models\AntecedentesOpcionesModel;
 use App\Models\Cie;
 use App\Models\Cita;
+use App\Models\Diente;
 use App\Models\Enfermeria;
 use App\Models\FichaModel;
 use App\Models\OdontogramaLayout;
@@ -109,7 +110,7 @@ class OdontologiaController extends Controller
 
     public function historial($idOdo)
     {
-        //Obtener la informacion del paciente 
+        //Obtener la informacion del paciente
         $model = new FichaModel();
         $ficha = $model->getFichaPaciente($idOdo);
         return response()->json($ficha);
@@ -134,13 +135,15 @@ class OdontologiaController extends Controller
         $patologias=Patologia::all();
         $planes=Plan::all();
         $cies=Cie::all();
+        $dientes=Diente::all();
         $result=[
             'paciente'=>$paciente,
             'enfermeria'=>$enfermeria,
             'antecedentes'=>$antecedentes,
             'patologias'=>$patologias,
             'planes'=>$planes,
-            'cies'=>$cies
+            'cies'=>$cies,
+            'dientes'=>$dientes
         ];
         return $this->sendResponse($result,'Informacion del paciente');
     }

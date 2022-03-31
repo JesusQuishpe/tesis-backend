@@ -40,6 +40,9 @@ class PruebaController extends Controller
     $lbPrueba->interpretacion = $request->input('interpretacion','');
     $lbPrueba->valor_cualitativo = $request->input('valor_cualitativo','');
     $lbPrueba->costo = $request->input('costo');
+    $lbPrueba->numerico=$request->input('numerico');
+    $lbPrueba->formula=$request->input('formula');
+    $lbPrueba->operandos=$request->input('operandos');
     $lbPrueba->save();
     return $this->sendResponse($lbPrueba, 'Registro creado');
   }
@@ -80,6 +83,9 @@ class PruebaController extends Controller
     $lbPrueba->interpretacion = $request->input('interpretacion','');
     $lbPrueba->valor_cualitativo = $request->input('valor_cualitativo','');
     $lbPrueba->costo = $request->input('costo');
+    $lbPrueba->numerico=$request->input('numerico');
+    $lbPrueba->formula=$request->input('formula');
+    $lbPrueba->operandos=$request->input('operandos');
     $lbPrueba->save();
     return $this->sendResponse($lbPrueba, 'Registro actualizado');
   }

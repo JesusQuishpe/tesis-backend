@@ -166,19 +166,19 @@ class ModuloSeeder extends Seeder
 
 
         $modulo=new Modulo();
-        $modulo->nombre='Nueva consulta';
-        $modulo->id_parent=5;
-        $modulo->enable=true;
-        $modulo->canDelete=false;
-        $modulo->path='/nueva-consulta';
-        $modulo->save();
-
-        $modulo=new Modulo();
         $modulo->nombre='Captura de resultados';
         $modulo->id_parent=5;
         $modulo->enable=true;
         $modulo->canDelete=false;
         $modulo->path='/captura';
+        $modulo->save();
+
+        $modulo=new Modulo();
+        $modulo->nombre='Consultar resultados';
+        $modulo->id_parent=5;
+        $modulo->enable=true;
+        $modulo->canDelete=false;
+        $modulo->path='/resultados';
         $modulo->save();
 
         //Submodulos mantenimiento

@@ -21,6 +21,7 @@ class CreateLbOrdenesTable extends Migration
             $table->string('hora',8);
             $table->integer('numPruebas');
             $table->float('total');
+            $table->boolean('pendiente')->default(true);
             $table->timestamps();
         });
     }

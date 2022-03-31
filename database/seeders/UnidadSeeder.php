@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\LbUnidad;
 use App\Models\Unidad;
 use Illuminate\Database\Seeder;
 
@@ -14,22 +15,22 @@ class UnidadSeeder extends Seeder
      */
     public function run()
     {
-        $unidad=new Unidad();
+        $unidad=new LbUnidad();
         $unidad->nombre="Gramos por decilitro";
         $unidad->abreviatura="g/dL";
         $unidad->save();
 
-        $unidad=new Unidad();
+        $unidad=new LbUnidad();
         $unidad->nombre="Gramos por litro";
         $unidad->abreviatura="g/L";
         $unidad->save();
 
-        $unidad=new Unidad();
+        $unidad=new LbUnidad();
         $unidad->nombre="Microlitros";
         $unidad->abreviatura="mcL";
         $unidad->save();
 
-        $unidad=new Unidad();
+        $unidad=new LbUnidad();
         $unidad->nombre="Miligramos por decilitro";
         $unidad->abreviatura="mg/dL";
         $unidad->save();

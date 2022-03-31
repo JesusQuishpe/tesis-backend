@@ -21,7 +21,7 @@ class CreateLbCapturaResultadosTable extends Migration
             $table->foreign('id_prueba')->references('id')->on('lb_pruebas');
             $table->string('resultado_string',100)->nullable();
             $table->float('resultado_numerico')->nullable();
-            $table->string('observacion',300)->nullable();
+            $table->string('observaciones',300)->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +33,6 @@ class CreateLbCapturaResultadosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lb_captura_pruebas');
+        Schema::dropIfExists('lb_captura_resultados');
     }
 }

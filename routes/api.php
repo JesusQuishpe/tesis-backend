@@ -21,6 +21,8 @@ use App\Http\Controllers\HelicobacterHecesController;
 use App\Http\Controllers\HematologiaController;
 use App\Http\Controllers\HemoglobinaController;
 use App\Http\Controllers\LaboratorioController;
+use App\Http\Controllers\LbCapturaController;
+use App\Http\Controllers\LbOrdenController;
 use App\Http\Controllers\MedicinaController;
 use App\Http\Controllers\ModuloController;
 use App\Http\Controllers\OdontologiaController;
@@ -78,6 +80,8 @@ Route::apiResource('titulos',TituloController::class)->parameters(['titulos'=>'t
 Route::apiResource('areas',AreaController::class)->parameters(['areas'=>'lbArea']);
 Route::apiResource('pruebas',PruebaController::class)->parameters(['pruebas'=>'lbPrueba']);
 Route::apiResource('grupos',GrupoController::class)->parameters(['grupos'=>'lbGrupo']);
+Route::apiResource('ordenes',LbOrdenController::class)->parameters(['ordenes'=>'lbOrden']);
+Route::apiResource('capturas',LbCapturaController::class)->parameters(['capturas'=>'lbCaptura']);
 //Route::apiResource('estudios',EstudioController::class)->parameters(['estudios'=>'estudio']);
 Route::get('examenes/estudios',[ExamenController::class,'examenEstudios']);
 Route::apiResource('examenes',ExamenController::class)->parameters(['examenes'=>'examen']);

@@ -20,7 +20,7 @@ class PacienteController extends Controller
         if ($request->has('cedula')) {
             $model = new Paciente();
             $paciente = $model->buscarPorCedula($request->input('cedula'));
-            return response()->json($paciente);
+            return $this->sendResponse($paciente,'Paciente por cedula');
         }
 
         if ($request->has('query')) {

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         //\App\Models\User::factory(10)->create();
         $this->call(PacienteSeeder::class);
         $this->call(DoctorSeeder::class);
-        $this->call(TipoExamenSeeder::class);
+        //$this->call(TipoExamenSeeder::class);
         $this->call(PatologiaSeeder::class);
         $this->call(AntecedenteSeeder::class);
         $this->call(ModuloSeeder::class);
@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
         $this->call(DienteSeeder::class);
         $this->call(SimbologiaSeeder::class);
         $this->call(UnidadSeeder::class);
-        $this->call(TituloSeeder::class);
-        $this->call(EstudioSeeder::class);
+        //$this->call(TituloSeeder::class);
+        //$this->call(EstudioSeeder::class);
         //$this->call(ModuloOperacionSeeder::class);
         //$this->call(CitaSeeder::class);
     }

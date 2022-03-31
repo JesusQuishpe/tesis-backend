@@ -32,11 +32,6 @@ class SimbologiaSeeder extends Seeder
       $simbologia->tooltipDirection="top";
       $simbologia->save();
 
-      $simbologia=new Simbologia();
-      $simbologia->nombre="Extracción indicada";
-      $simbologia->path="extraccion-indicada.svg";
-      $simbologia->tooltipDirection="top";
-      $simbologia->save();
 
       $simbologia=new Simbologia();
       $simbologia->nombre="Pérdida por caries";
@@ -92,10 +87,10 @@ class SimbologiaSeeder extends Seeder
       $simbologia->tooltipDirection="top";
       $simbologia->save();
 
-      $simbologia=new Simbologia();
+      /*$simbologia=new Simbologia();
       $simbologia->nombre="Limpiar";
       $simbologia->path="clean.svg";
       $simbologia->tooltipDirection="top";
-      $simbologia->save();
+      $simbologia->save();*/
     }
 }
