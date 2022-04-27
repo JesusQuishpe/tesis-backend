@@ -9,9 +9,9 @@ class Rol extends Model
 {
     use HasFactory;
     protected $table='roles';
-    
-    public function permisos()
+
+    public function permissions()
     {
-        return $this->belongsToMany(Modulo::class,'rol_modulos','id_rol','id_modulo');
+        return $this->belongsToMany(SystemModule::class,'permissions','rol_id','module_id');
     }
 }

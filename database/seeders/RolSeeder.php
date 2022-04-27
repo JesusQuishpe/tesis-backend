@@ -16,23 +16,23 @@ class RolSeeder extends Seeder
     {
         //
         $rol=new Rol();
-        $rol->nombre='Administrador';
+        $rol->name='Administrador';
         $rol->save();
 
         $rol=new Rol();
-        $rol->nombre='Cajero';
+        $rol->name='Cajero';
         $rol->save();
 
         $rol=new Rol();
-        $rol->nombre='Enfermero';
+        $rol->name='Enfermero';
         $rol->save();
 
         $rol=new Rol();
-        $rol->nombre='Odontologo';
+        $rol->name='Odontologo';
         $rol->save();
-        
+
         $rol=new Rol();
-        $rol->nombre='Laboratista';
+        $rol->name='Laboratista';
         $rol->save();
     }
 }

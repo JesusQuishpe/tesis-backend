@@ -15,9 +15,9 @@ class CreateLbAreasTable extends Migration
     {
         Schema::create('lb_areas', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo',20);
-            $table->string('nombre',100);
-            $table->float('costo')->default(0);
+            $table->string('code',20)->unique();
+            $table->string('name',100)->unique();
+            $table->float('price')->default(0);
             $table->timestamps();
         });
     }

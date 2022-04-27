@@ -10,7 +10,8 @@
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.11",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "tecnickcom/tcpdf": "^6.4"
     },
     "require-dev": {
         "arielmejiadev/json-api-auth": "^1.0",

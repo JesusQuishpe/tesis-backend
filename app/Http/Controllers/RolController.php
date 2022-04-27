@@ -26,7 +26,7 @@ class RolController extends Controller
     public function store(Request $request)
     {
         $rol=new Rol();
-        $rol->nombre=$request->input('nombre');
+        $rol->name=$request->input('name');
         $rol->save();
         return $this->sendResponse($rol,'Registro creado');
     }
@@ -51,7 +51,7 @@ class RolController extends Controller
      */
     public function update(Request $request, Rol $role)
     {
-        $role->nombre=$request->input('nombre');
+        $role->name=$request->input('name');
         $role->save();
         return $this->sendResponse($role,'Rol actualizado');
     }
@@ -64,6 +64,7 @@ class RolController extends Controller
      */
     public function destroy(Rol $role)
     {
-        //
+        $role->delete();
+        return $this->sendResponse([],'Registro eliminado correctamente');
     }
 }

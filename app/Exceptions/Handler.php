@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
@@ -37,42 +38,57 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            if($e instanceof ModelNotFoundException){
+        $this->renderable(function (Throwable $e) {
+            if ($e instanceof NotFoundHttpException) {
                 return response()->json([
-                    'message'=>$e->getMessage()
-                ],404);
+                    'message' => 'Registro no encontrado',
+                    'exception_code' => $e->getCode(),
+                    'exception_message' => $e->getMessage()
+                ], 404);
+            }
+
+            if ($e instanceof ModelNotFoundException) {
+                return response()->json([
+                    'message' => 'Modelo no encontrado',
+                    'exception_code' => $e->getCode(),
+                    'exception_message' => $e->getMessage()
+                ], 404);
             }
         });
 
         $this->renderable(function (Throwable $e) {
-            if($e instanceof NotFoundHttpException){
-                return response()->json([
-                    'message'=>'Registro no encontrado: '.$e->getMessage(),
-                    'status'=>404
-                ],404);
-            }
-
-            if($e instanceof ModelNotFoundException){
-                return response()->json([
-                    'message'=>'Modelo no encontrado'
-                ],404);
+            if ($e instanceof QueryException) {
+                $sql_code = $e->errorInfo[1];
+                $sql_message = $e->errorInfo[2];
+                if ($sql_code === 1451) {
+                    return response()->json([
+                        'sql_code' => $sql_code,
+                        'sql_message' => $sql_message,
+                        'message' => "No se puede eliminar, el registro está relacionado \n con otros datos.",
+                        'exception_code' => $e->getCode(),
+                        'exception_message' => $e->getMessage()
+                    ], 404);
+                }
+                if ($sql_code === 1062) {
+                    return response()->json([
+                        'sql_code' => $sql_code,
+                        'sql_message' => $sql_message,
+                        'message' => "El registro que intenta crear ya existe..",
+                        'exception_code' => $e->getCode(),
+                        'exception_message' => $e->getMessage()
+                    ], 404);
+                }
             }
         });
 
         $this->renderable(function (Throwable $e) {
-          if($e instanceof QueryException){
-              return response()->json([
-                'sql_code'=>$e->errorInfo[1],
-                'message'=>$e->errorInfo[2]
-              ],404);
-          }
-
-          if($e instanceof ModelNotFoundException){
-              return response()->json([
-                  'message'=>'Modelo no encontrado'
-              ],404);
-          }
-      });
+            if ($e instanceof Exception) {
+                return response()->json([
+                    'message' => "Ha ocurrido un error inesperado...",
+                    'exception_code' => $e->getCode(),
+                    'exception_message' => $e->getMessage()
+                ], 404);
+            }
+        });
     }
 }

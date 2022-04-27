@@ -2,68 +2,73 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AntecedentesOpcionesModel;
-use App\Models\FichaModel;
-use App\Models\OdontogramaLayout;
-use App\Models\PatologiaModel;
-use App\Reportes\HistorialReporte;
+
+use App\Models\OdoPatientRecord;
+use App\Reports\OdontologyReport;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\View;
 use TCPDF;
 
 class PDFController extends Controller
 {
     //
-    public function pdf(Request $request, $idOdo)
+    public function pdf($appoId,$nurId,$recId)
     {
         // $idOdo = $request->input('idOdo');
+        //$appoId=$request->input('appoId');
+        //$nurId=$request->input('nurId');
+       // $recId=$request->input('recId');
 
-        $model = new FichaModel();
-        $data = $model->getFichaPaciente($idOdo);
+        $model=new OdoPatientRecord();
+        $data=$model->getPatientRecordData($appoId,$nurId,$recId);
+
         #---------------------------------------
-        $informacion = $data['informacion'];
-        $antecedenteOpcionesModel = new AntecedentesOpcionesModel();
-        $antecedentes = $antecedenteOpcionesModel->getAll();
-        $patologiaModel = new PatologiaModel();
-        $patologias = $patologiaModel->getAll();
 
-
-        $reporte = new HistorialReporte();
+        $report = new OdontologyReport();
         // set document information
 
-        $reporte->SetCreator(PDF_CREATOR);
-        $reporte->SetAuthor('Nicola Asuni');
-        $reporte->SetTitle('HISTORIAL');
-        $reporte->SetSubject('TCPDF Tutorial');
-        $reporte->SetKeywords('TCPDF, PDF, example, test, guide');
+        $report->SetCreator(PDF_CREATOR);
+        $report->SetAuthor('Nicola Asuni');
+        $report->SetTitle('HISTORIAL');
+        $report->SetSubject('TCPDF Tutorial');
+        $report->SetKeywords('TCPDF, PDF, example, test, guide');
         // set default header data
-        
+
         // set default header data
-        $reporte->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, 'Historial' . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
-        $reporte->setFooterData(array(0, 64, 0), array(0, 64, 128));
+        $report->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, 'Historial' . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
+        $report->setFooterData(array(0, 64, 0), array(0, 64, 128));
 
         // set header and footer fonts
-        $reporte->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-        $reporte->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+        $report->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+        $report->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
         // set default monospaced font
-        $reporte->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
+        $report->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
 
-        $reporte->SetHeaderMargin(15);
+        $report->SetHeaderMargin(15);
 
-        $reporte->SetMargins(10, 25, 10);
-        
+        $report->SetMargins(10, 60, 10);
 
-        //$reporte->SetFooterMargin(PDF_MARGIN_FOOTER);
+        //$report->SetFooterMargin(PDF_MARGIN_FOOTER);
 
+        $report->InformacionPersonal($data['patient'],$data['patient_record']);
+        $report->Antecedentes($data['diseaseList'],$data['familyHistory']);
+        $report->ExamenEstomatognatico($data['pathologies'],$data['stomatognathicTest']);
+        $report->Odontograma($data['patient_record']->odontogram_path);
+        $report->IndicadoresDeSaludBucal($data['indicator']);
+        $report->indicesCpoCeo($data['cpoCeoRatios']);
+        $report->planDiagnostico($data['planDiagnostic']);
+        $report->diagnosticos($data['diagnostics']);
+        $report->tratamientos($data['treatments']);
+        //dd($data['planDiagnostic']->details->toArray());
+        $report->Output('Historial.pdf', 'I');
+    }
 
-
-        $reporte->InformacionPersonal($informacion);
-        $reporte->Antecedentes($antecedentes, $data['antecedentes']['detalles'], $data['antecedentes']['general']->descripcion);
-        $reporte->ExamenEstomatognatico($patologias, $data['examen']['detalles'], $data['examen']['general']->descripcion);
-        $reporte->Odontograma($data['odontograma']['odontogramaImage']);
-        $reporte->IndicadoresDeSaludBucal($data['indicadores']['general'], $data['indicadores']['detalles']);
-        $reporte->Output('Historial.pdf', 'I');
+    public function downloadActa($recId)
+    {
+        $model=OdoPatientRecord::find($recId);
+        $extension=File::extension($model->acta_path);
+        return Storage::download($model->acta_path,"acta-$model->id.$extension");
     }
 }

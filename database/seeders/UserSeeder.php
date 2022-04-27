@@ -19,7 +19,7 @@ class UserSeeder extends Seeder
         $user->name="Jesús Quishpe";
         $user->email="jesusquishpe17@gmail.com";
         $user->password=Hash::make('admin');
-        $user->id_rol=1;
+        $user->rol_id=1;
         $user->save();
     }
 }

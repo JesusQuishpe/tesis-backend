@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\MedicinaRequest;
-use App\Models\Cita;
-use App\Models\Enfermeria;
-use App\Models\Medicina;
-use Carbon\Carbon;
+use App\Models\MedicalAppointment;
+use App\Models\MedicineArea;
+use App\Models\NursingArea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,15 +13,27 @@ class MedicinaController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->has('cedula')) {
-            $model = new Medicina();
-            $resultados = $model->getResultadosPorCedula($request->input('cedula'));
-            return $this->sendResponse($resultados, 'Resultados del paciente');
+        //Para obtener información de enfermeria
+        if ($request->has('nurId')) {
+            $model = new MedicineArea();
+            $results = $model->getDataOfNursingArea($request->input('nurId'));
+            return $this->sendResponse($results, 'Resultados del paciente por id de enfermeria');
         }
-        $model = new Medicina();
-        $pacientes = $model->getPacientes();
-        //$pacientes=Carbon::now()->format('Y-m-d');
-        return $this->sendResponse($pacientes, 'Pacientes en espera medicina');
+        //Para obtener los pacientes en espera
+        if ($request->has('queque')) {
+            $model = new MedicineArea();
+            $patients = $model->getPatientQueue(); //patients en espera
+            return $this->sendResponse($patients, 'Pacientes en espera medicina');
+        }
+        //Para obtener los resultados por numero de cedula
+        if ($request->has('identification')) {
+            $model = new MedicineArea();
+            $patients = $model->getMedicineRecordsByIdentification($request->input('identification')); //patients en espera
+            return $this->sendResponse($patients, 'Pacientes en espera medicina');
+        }
+        //Devuelve todos los resultados del area de medicina
+        $result = MedicineArea::with('nursingArea.medicalAppointment.patient')->get();
+        return $this->sendResponse($result, 'Registros del area de medicina');
     }
 
     public function store(MedicinaRequest $request)
@@ -30,19 +41,20 @@ class MedicinaController extends Controller
         try {
             DB::beginTransaction();
             $validated = $request->validated();
-            $validated['atendido'] = true;
-            Medicina::create($validated);
-            $cita = Cita::find($validated['id_cita']);
-            $enfermeria = Enfermeria::find($validated['id_enfermeria']);
-            $enfermeria->diabetes = $request->input('diabetes');
-            $enfermeria->cardiopatia = $request->input('cardiopatia');
-            $enfermeria->hipertension = $request->input('hipertension');
-            $enfermeria->cirugias = $request->input('cirugias');
-            $enfermeria->alergias_medicina = $request->input('alergias_medicina');
-            $enfermeria->alergias_comida = $request->input('alergias_comida');
-            $enfermeria->save();
-            $cita->atendido = true;
-            $cita->update();
+            $validated['attended'] = true;
+            MedicineArea::create($validated);
+            $cita = MedicalAppointment::find($validated['appo_id']);
+            $nur = NursingArea::find($validated['nur_id']);
+            $nur->therapy=$request->input('therapy');
+            $nur->diabetes = $request->input('diabetes');
+            $nur->cardiopathy = $request->input('cardiopathy');
+            $nur->hypertension = $request->input('hypertension');
+            $nur->surgeries = $request->input('surgeries');
+            $nur->medicine_allergies = $request->input('medicine_allergies');
+            $nur->food_allergies = $request->input('food_allergies');
+            $nur->save();
+            $cita->attended = true;
+            $cita->save();
             DB::commit();
             return $this->sendResponse([], 'Registro creado');
         } catch (\Throwable $th) {
@@ -50,55 +62,84 @@ class MedicinaController extends Controller
             try {
                 DB::rollBack();
             } catch (\Throwable $th) {
-                return $this->sendError($th->getMessage());
+                throw $th;
             }
-            return $this->sendError($th->getMessage());
+            throw $th;
         }
     }
-    public function update(MedicinaRequest $request, Medicina $medicina)
+
+    public function show($medicineId)
+    {
+        return $this->sendResponse(MedicineArea::with('nursingArea.medicalAppointment.patient')
+        ->where('id','=',$medicineId)
+        ->firstOrFail(), 'Datos del area de medicina dado el id');
+    }
+
+    public function update(MedicinaRequest $request, MedicineArea $medicine)
     {
         try {
             DB::beginTransaction();
-            $medicina->update($request->only([
-                'sintoma1',
-                'sintoma2',
-                'sintoma3',
-                'presuntivo1',
-                'presuntivo2',
-                'presuntivo3',
-                'definitivo1',
-                'definitivo2',
-                'definitivo3',
-                'medicamento1',
-                'medicamento2',
-                'medicamento3',
-                'medicamento4',
-                'medicamento5',
-                'medicamento6',
-                'dosificacion1',
-                'dosificacion2',
-                'dosificacion3',
-                'dosificacion4',
-                'dosificacion5',
-                'dosificacion6',
+            $medicine->update($request->only([
+                'symptom1',
+                'symptom2',
+                'symptom3',
+                'presumptive1',
+                'presumptive2',
+                'presumptive3',
+                'definitive1',
+                'definitive2',
+                'definitive3',
+                'medicine1',
+                'medicine2',
+                'medicine3',
+                'medicine4',
+                'medicine5',
+                'medicine6',
+                'dosage1',
+                'dosage2',
+                'dosage3',
+                'dosage4',
+                'dosage5',
+                'dosage6',
             ]));
-            $enfermeria = Enfermeria::find($request->input('id_enfermeria'));
-            $enfermeria->diabetes = $request->input('diabetes');
-            $enfermeria->cardiopatia = $request->input('cardiopatia');
-            $enfermeria->hipertension = $request->input('hipertension');
-            $enfermeria->cirugias = $request->input('cirugias');
-            $enfermeria->alergias_medicina = $request->input('alergias_medicina');
-            $enfermeria->alergias_comida = $request->input('alergias_comida');
-            $enfermeria->save();
+            $nur = NursingArea::find($request->input('nur_id'));
+            $nur->therapy=$request->input('therapy');
+            $nur->diabetes = $request->input('diabetes');
+            $nur->cardiopathy = $request->input('cardiopathy');
+            $nur->hypertension = $request->input('hypertension');
+            $nur->surgeries = $request->input('surgeries');
+            $nur->medicine_allergies = $request->input('medicine_allergies');
+            $nur->food_allergies = $request->input('food_allergies');
+            $nur->save();
             DB::commit();
             return $this->sendResponse([], 'Registro actualizado');
         } catch (\Throwable $th) {
             try {
                 DB::rollBack();
             } catch (\Throwable $th) {
-                return $this->sendError($th->getMessage());
+                throw $th;
             }
-            return $this->sendError($th->getMessage());
+            throw $th;
+        }
+    }
+
+    public function destroy($nurId)
+    {
+        try {
+            DB::beginTransaction();
+            $nur = NursingArea::find($nurId);
+            $appo=MedicalAppointment::find($nur->appo_id);
+            $nur->delete();
+            $appo->delete();
+            DB::commit();
+            return $this->sendResponse([], 'Valores de enfermeria y cita eliminados correctamente');
+        } catch (\Throwable $th) {
+            try {
+                DB::rollBack();
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+            throw $th;
         }
     }
 }

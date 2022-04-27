@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class LbArea extends Model
 {
     use HasFactory;
+    protected $table='lb_areas';
+
+    public function groups()
+    {
+        return $this->hasMany(LbGroup::class,'area_id','id');
+    }
 }

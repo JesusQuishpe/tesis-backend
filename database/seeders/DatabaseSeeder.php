@@ -14,23 +14,21 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         //\App\Models\User::factory(10)->create();
-        $this->call(PacienteSeeder::class);
-        $this->call(DoctorSeeder::class);
-        //$this->call(TipoExamenSeeder::class);
-        $this->call(PatologiaSeeder::class);
-        $this->call(AntecedenteSeeder::class);
-        $this->call(ModuloSeeder::class);
+        //$this->call(PatientSeeder::class);
+        //$this->call(DoctorSeeder::class);
+        $this->call(PathologieSeeder::class);
+        $this->call(DiseaseListSeeder::class);
+        $this->call(SystemModuleSeeder::class);
         $this->call(RolSeeder::class);
-        //$this->call(OperacionSeeder::class);
-        $this->call(RolModuloSeeder::class);
+        $this->call(PermissionSeeder::class);
         $this->call(UserSeeder::class);
         $this->call(PlanSeeder::class);
-        $this->call(DienteSeeder::class);
-        $this->call(SimbologiaSeeder::class);
-        $this->call(UnidadSeeder::class);
-        //$this->call(TituloSeeder::class);
-        //$this->call(EstudioSeeder::class);
-        //$this->call(ModuloOperacionSeeder::class);
+        $this->call(TeethSeeder::class);
+        $this->call(SymbologieSeeder::class);
+        $this->call(MeasurementSeeder::class);
+        $this->call(AreaSeeder::class);
+        $this->call(GroupSeeder::class);
+        $this->call(TestSeeder::class);
         //$this->call(CitaSeeder::class);
     }
 }

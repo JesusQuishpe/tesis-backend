@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Plan;
+use App\Models\OdoPlan;
 use Illuminate\Database\Seeder;
 
 class PlanSeeder extends Seeder
@@ -14,21 +14,21 @@ class PlanSeeder extends Seeder
      */
     public function run()
     {
-        $plan=new Plan();
-        $plan->nombre="Biometría";
+        $plan=new OdoPlan();
+        $plan->name="Biometría";
         $plan->save();
 
-        $plan=new Plan();
-        $plan->nombre="Química sanguínea";
+        $plan=new OdoPlan();
+        $plan->name="Química sanguínea";
         $plan->save();
 
-        $plan=new Plan();
-        $plan->nombre="Rayos x";
+        $plan=new OdoPlan();
+        $plan->name="Rayos x";
         $plan->save();
 
-        $plan=new Plan();
-        $plan->nombre="Otros";
+        $plan=new OdoPlan();
+        $plan->name="Otros";
         $plan->save();
-        
+
     }
 }
