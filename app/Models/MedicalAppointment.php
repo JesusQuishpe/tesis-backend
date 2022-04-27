@@ -16,6 +16,7 @@ class MedicalAppointment extends Model
         'appo_identification_number',
         'area',
         'value',
+        'initial_value',
         //'factura_cita',
         //'estado_cita',
         'patient_id',

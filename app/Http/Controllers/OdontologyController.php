@@ -209,7 +209,7 @@ class OdontologyController extends Controller
             //Actualizar el estado de la cita como atendida
             $appo = MedicalAppointment::find($data['appo_id']);
             $appo->attended = true;
-            $appo->value = $appo->value + $record->value;
+            $appo->value = $appo->initial_value + $record->value;
             $appo->save();
             DB::commit();
             return $this->sendResponse([], 'Ficha del paciente guardada correctamente');
@@ -432,7 +432,7 @@ class OdontologyController extends Controller
             //Actualizar el valor de la cita
             $appo = MedicalAppointment::find($data['appo_id']);
             $appo->attended = true;
-            $appo->value = $record->value + 2; //El valor de dos es fijo, corresponde al valor de la consulta
+            $appo->value = $appo->initial_value + $record->value; //El valor de dos es fijo, corresponde al valor de la consulta
             $appo->save();
             DB::commit();
             //Si todo se completa eliminamos los odontogramas y actas movidos

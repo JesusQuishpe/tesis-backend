@@ -17,16 +17,24 @@ class PatientController extends Controller
     public function index(Request $request)
     {
         //Buscar paciente por cedula o nombre completo
+        if ($request->has('identification') && $request->has('isSearch')) {
+            return $this->sendResponse(
+                Patient::where('identification_number', '=', $request->input('identification'))
+                ->paginate(1, '*', 'page', 1),
+                'Buscar paciente por cedula para mostrar en tabla'
+            );
+        }
+
         if ($request->has('identification_number')) {
             $model = new Patient();
             $patient = $model->searchByIdentification($request->input('identification_number'));
-            return $this->sendResponse($patient,'Paciente por cedula');
+            return $this->sendResponse($patient, 'Paciente por cedula');
         }
 
         if ($request->has('query')) {
             $model = new Patient();
             $patient = $model->searchByIdentificationOrLastname($request->input('query'));
-            return$this->sendResponse($patient,'Paciente por cedula o apellido');
+            return $this->sendResponse($patient, 'Paciente por cedula o apellido');
         }
         return $this->sendResponse(Patient::paginate(10), 'Pacientes');
     }
@@ -103,6 +111,6 @@ class PatientController extends Controller
     public function destroy(Patient $patient)
     {
         $patient->delete();
-        return $this->sendResponse([],'Registro eliminado correctamente');
+        return $this->sendResponse([], 'Registro eliminado correctamente');
     }
 }

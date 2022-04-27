@@ -197,6 +197,7 @@ class MedicalAppoitmentController extends Controller
                 'appo_identification_number' => $request->identification_number,
                 'area' => $request->area,
                 'value' => $request->value,
+                'initial_value'=>$request->value,
                 //'factura_cita' => null,
                 //'estado_cita' => '',
                 'patient_id' => $request->patient_id,
@@ -294,41 +295,45 @@ class MedicalAppoitmentController extends Controller
             $nur = NursingArea::where('appo_id', '=', $appo->id)->first();
             if ($nur) {
                 if ($appo->area === "Medicina") {
-                    $medicineArea = MedicineArea::where('nur_id', '=', $nur->id)->firstOrFail();
-                    $medicineArea->delete();
+                    $medicineArea = MedicineArea::where('nur_id', '=', $nur->id)->first();
+                    if($medicineArea){
+                        $medicineArea->delete();
+                    }
                 }
                 if ($appo->area === "Odontologia") {
-                    $record = OdoPatientRecord::where('nur_id', '=', $nur->id)->firstOrFail();
-                    $familyHistory = OdoFamilyHistory::where('rec_id', '=', $record->id)->firstOrFail();
-                    $familyDetails = OdoFamilyHistoryDetail::where('fam_id', '=', $familyHistory->id);
-                    $stomatognathic = OdoStomatognathicTest::where('rec_id', '=', $record->id)->firstOrFail();
-                    $stomatognathicDetails = OdoStomatognathicDetail::where('sto_test_id', '=', $stomatognathic->id);
-                    $indicator = OdoIndicator::where('rec_id', '=', $record->id)->firstOrFail();
-                    $indicatorDetails = OdoIndicatorDetail::where('id_ind', '=', $indicator->id);
-                    $cpoCeoRatio = OdoCpoCeoRatio::where('rec_id', '=', $record->id)->firstOrFail();
-                    $diagnosticPlan = OdoDiagnosticPlan::where('rec_id', '=', $record->id)->firstOrFail();
-                    $planDetails = OdoPlanDetail::where('diag_plan_id', '=', $diagnosticPlan->id);
-                    $diagnostics = OdoDiagnostic::where('rec_id', '=', $record->id);
-                    $treatments = OdoTreatment::where('rec_id', '=', $record->id);
-                    $odontogram = OdoOdontogram::where('rec_id', '=', $record->id)->firstOrFail();
-                    $teeth = OdoTeethDetail::where('odo_id', '=', $odontogram->id);
-                    $movilitiesReccesions = OdoMovilitieRecession::where('odo_id', '=', $odontogram->id);
+                    $record = OdoPatientRecord::where('nur_id', '=', $nur->id)->first();
+                    if ($record) {
+                        $familyHistory = OdoFamilyHistory::where('rec_id', '=', $record->id)->firstOrFail();
+                        $familyDetails = OdoFamilyHistoryDetail::where('fam_id', '=', $familyHistory->id);
+                        $stomatognathic = OdoStomatognathicTest::where('rec_id', '=', $record->id)->firstOrFail();
+                        $stomatognathicDetails = OdoStomatognathicDetail::where('sto_test_id', '=', $stomatognathic->id);
+                        $indicator = OdoIndicator::where('rec_id', '=', $record->id)->firstOrFail();
+                        $indicatorDetails = OdoIndicatorDetail::where('id_ind', '=', $indicator->id);
+                        $cpoCeoRatio = OdoCpoCeoRatio::where('rec_id', '=', $record->id)->firstOrFail();
+                        $diagnosticPlan = OdoDiagnosticPlan::where('rec_id', '=', $record->id)->firstOrFail();
+                        $planDetails = OdoPlanDetail::where('diag_plan_id', '=', $diagnosticPlan->id);
+                        $diagnostics = OdoDiagnostic::where('rec_id', '=', $record->id);
+                        $treatments = OdoTreatment::where('rec_id', '=', $record->id);
+                        $odontogram = OdoOdontogram::where('rec_id', '=', $record->id)->firstOrFail();
+                        $teeth = OdoTeethDetail::where('odo_id', '=', $odontogram->id);
+                        $movilitiesReccesions = OdoMovilitieRecession::where('odo_id', '=', $odontogram->id);
 
-                    $movilitiesReccesions->delete();
-                    $teeth->delete();
-                    $odontogram->delete();
-                    $treatments->delete();
-                    $diagnostics->delete();
-                    $planDetails->delete();
-                    $diagnosticPlan->delete();
-                    $cpoCeoRatio->delete();
-                    $indicatorDetails->delete();
-                    $indicator->delete();
-                    $stomatognathicDetails->delete();
-                    $stomatognathic->delete();
-                    $familyDetails->delete();
-                    $familyHistory->delete();
-                    $record->delete();
+                        $movilitiesReccesions->delete();
+                        $teeth->delete();
+                        $odontogram->delete();
+                        $treatments->delete();
+                        $diagnostics->delete();
+                        $planDetails->delete();
+                        $diagnosticPlan->delete();
+                        $cpoCeoRatio->delete();
+                        $indicatorDetails->delete();
+                        $indicator->delete();
+                        $stomatognathicDetails->delete();
+                        $stomatognathic->delete();
+                        $familyDetails->delete();
+                        $familyHistory->delete();
+                        $record->delete();
+                    }
                 }
                 $nur->delete();
             }
@@ -336,14 +341,16 @@ class MedicalAppoitmentController extends Controller
             if ($appo->area === "Laboratorio") {
                 $order = LbOrder::where('appo_id', '=', $appo->id)->first();
                 //dd($order);
-                $orderTests = LbOrderTest::where('order_id', '=', $order->id);
-                $result = LbResult::where('order_id', '=', $order->id)->first();
-                $resultDetails = LbResultDetail::where('result_id', '=', $result->id);
+                if ($order) {
+                    $orderTests = LbOrderTest::where('order_id', '=', $order->id);
+                    $result = LbResult::where('order_id', '=', $order->id)->first();
+                    $resultDetails = LbResultDetail::where('result_id', '=', $result->id);
 
-                $orderTests->delete();
-                $resultDetails->delete();
-                $result->delete();
-                $order->delete();
+                    $orderTests->delete();
+                    $resultDetails->delete();
+                    $result->delete();
+                    $order->delete();
+                }
             }
 
             $appo->delete();

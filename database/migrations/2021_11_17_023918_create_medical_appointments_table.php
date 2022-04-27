@@ -23,7 +23,8 @@ class CreateMedicalAppointmentsTable extends Migration
             $table->string('hour',8);
             $table->string('appo_identification_number',10);
             $table->string('area',25);
-            $table->decimal('value',10,2);
+            $table->float('value');
+            $table->float('initial_value');
             //$table->string('factura_cita',15)->nullable()->default(null);
             //$table->string('estado_cita',20)->nullable()->default(null);
             $table->boolean('attended')->default(false);
