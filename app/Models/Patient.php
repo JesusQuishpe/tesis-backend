@@ -8,21 +8,35 @@ use Illuminate\Database\Eloquent\Model;
 class Patient extends Model
 {
     use HasFactory;
-    protected $table='patients';
-    protected $fillable=[
+    protected $table = 'patients';
+    protected $fillable = [
         'date',
         'identification_number',
         'lastname',
         'name',
         'fullname',
         'birth_date',
+        'age',
         'gender',
         'cellphone_number',
         'address',
         'province',
-        'city'
+        'city',
+        'medical_history',
+        'history_date',
+        'statistics',
+        //Para la parte del area de medicina
+        'email',
+        'notes',
+        'occupation',
+        'marital_status', //Estado civil
+        'mother_name',
+        'father_name',
+        'origin', //Procedencia
+        'couple_name',
     ];
-    protected $hidden=[
+
+    protected $hidden = [
         'created_at',
         'updated_at',
         'date',
@@ -49,12 +63,12 @@ class Patient extends Model
      */
     public function searchByIdentificationOrLastname($query)
     {
-        if($query===""){
+        if ($query === "") {
             return Patient::take(10);
-        }else{
+        } else {
             return Patient::where('identification_number', '=', $query)
-            ->orWhere('fullname', 'LIKE','%'.$query.'%')
-            ->get();
+                ->orWhere('fullname', 'LIKE', '%' . $query . '%')
+                ->get();
         }
     }
 }

@@ -58,7 +58,7 @@ class MedicineArea extends Model
                 'nursing_area.pregnancy',
                 'nursing_area.doctor',
                 'patients.id as patient_id',
-                'patients.identification_number',
+                'patients.identification_number as identification',
                 'patients.name',
                 'patients.lastname',
                 'patients.gender',

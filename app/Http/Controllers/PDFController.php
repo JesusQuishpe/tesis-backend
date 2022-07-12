@@ -13,7 +13,7 @@ use TCPDF;
 class PDFController extends Controller
 {
     //
-    public function pdf($appoId,$nurId,$recId)
+    public function pdf($recId)
     {
         // $idOdo = $request->input('idOdo');
         //$appoId=$request->input('appoId');
@@ -21,7 +21,7 @@ class PDFController extends Controller
        // $recId=$request->input('recId');
 
         $model=new OdoPatientRecord();
-        $data=$model->getPatientRecordData($appoId,$nurId,$recId);
+        $data=$model->getPatientRecordData($recId);
 
         #---------------------------------------
 

@@ -33,11 +33,14 @@ class OdoPatientRecord extends Model
     }
 
 
-    public function getPatientRecordData($appo_id,$nur_id,$rec_id)
+    public function getPatientRecordData($rec_id)
     {
-        $appo = MedicalAppointment::find($appo_id);
-        $nur = NursingArea::find($nur_id);
-        $patientRecord = OdoPatientRecord::find($rec_id);
+
+        $patientRecord = OdoPatientRecord::with('nursingArea.medicalAppointment.patient')->find($rec_id);
+        //dd($patientRecord);
+        $nur=$patientRecord->nursingArea;
+        $appo=$nur->medicalAppointment;
+        $patient=$appo->patient;
         $familyHistory = OdoFamilyHistory::with('details')->where('rec_id', '=', $patientRecord->id)->first();
         $stomatognathicTest = OdoStomatognathicTest::with('details')->where('rec_id', '=', $patientRecord->id)->first();
         $indicator = OdoIndicator::with('details')->where('rec_id', '=', $patientRecord->id)->first();
@@ -55,7 +58,7 @@ class OdoPatientRecord extends Model
         $teeth = OdoTooth::all();
 
         $result = [
-            'patient' => $appo->patient,
+            'patient' => $patient,
             'patient_record'=>$patientRecord,
             'nursingArea' => $nur,
             'diseaseList' => $diseaseList,
@@ -72,6 +75,12 @@ class OdoPatientRecord extends Model
             'treatments'=>$treatments,
             'odontogram' => $odontogram
         ];
+
         return $result;
+    }
+
+    public function nursingArea()
+    {
+        return $this->belongsTo(NursingArea::class,'nur_id','id');
     }
 }

@@ -14,7 +14,8 @@ class TestController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->sendResponse(LbTest::with('group.area')->get(), 'Pruebas de laboratorio');
+        return $this->sendResponse(LbTest::with('group:id,name,area_id', 'group.area:id,name')
+            ->get(), 'Pruebas de laboratorio');
     }
 
     /**

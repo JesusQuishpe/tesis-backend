@@ -6,8 +6,14 @@ use App\Models\LbOrder;
 use App\Models\LbOrderTest;
 use App\Models\LbResult;
 use App\Models\LbResultDetail;
+use App\Models\MedAllergie;
+use App\Models\MedFamilyHistory;
 use App\Models\MedicalAppointment;
+use App\Models\MedicalRecord;
 use App\Models\MedicineArea;
+use App\Models\MedInterrogation;
+use App\Models\MedLifestyle;
+use App\Models\MedPhysicalExploration;
 use App\Models\NursingArea;
 use App\Models\OdoCpoCeoRatio;
 use App\Models\OdoDiagnostic;
@@ -100,7 +106,7 @@ class MedicalAppoitmentController extends Controller
                     ->appends($dataAppend), 'Citas por fechas');
             }
 
-            if ($stateFilter && (!$startDate && !$endDate) && !$identification) {
+            if ($stateFilter && !$startDate && !$endDate && !$identification) {
                 //Buscar citas solo  por estado
                 return $this->sendResponse(MedicalAppointment::join('patients', 'patient_id', '=', 'patients.id')
                     ->select([
@@ -197,7 +203,7 @@ class MedicalAppoitmentController extends Controller
                 'appo_identification_number' => $request->identification_number,
                 'area' => $request->area,
                 'value' => $request->value,
-                'initial_value'=>$request->value,
+                'initial_value' => $request->value,
                 //'factura_cita' => null,
                 //'estado_cita' => '',
                 'patient_id' => $request->patient_id,
@@ -228,11 +234,67 @@ class MedicalAppoitmentController extends Controller
                 }
             }
 
-            /*if ($request->area !== 'Laboratorio') {
-                $nur = new NursingArea();
-                $nur->appo_id = $appo->id;
-                $nur->save();
-            }*/
+            //Si va al area de medicina,se crea un expediente vacio
+            if ($request->area === 'Medicina') {
+                $existRecord = MedicalRecord::where('patient_id','=', $request->patient_id)->first();
+                if (!$existRecord) {
+                    //Creamos el expediente o registro medico
+                    $medRecord = new MedicalRecord();
+                    $medRecord->patient_id = $request->patient_id;
+                    $medRecord->date = $date;
+                    $medRecord->hour = $hour;
+                    $medRecord->save();
+                    //Antecedentes
+                    $medFam = new MedFamilyHistory();
+                    $medFam->recordId = $medRecord->id;
+                    $medFam->pathological = "";
+                    $medFam->noPathological = "";
+                    $medFam->perinatal = "";
+                    $medFam->gynecological = "";
+                    $medFam->save();
+                    //Exploracion fisica
+                    $medPhy = new MedPhysicalExploration();
+                    $medPhy->recordId = $medRecord->id;
+                    $medPhy->outerHabitus = "";
+                    $medPhy->head = "";
+                    $medPhy->eyes = "";
+                    $medPhy->otorhinolaryngology = "";
+                    $medPhy->neck = "";
+                    $medPhy->chest = "";
+                    $medPhy->abdomen = "";
+                    $medPhy->gynecologicalExamination = "";
+                    $medPhy->genitals = "";
+                    $medPhy->spine = "";
+                    $medPhy->extremities = "";
+                    $medPhy->neurologicalExamination = "";
+                    $medPhy->save();
+                    //Interrogatorio
+                    $medIn = new MedInterrogation();
+                    $medIn->recordId = $medRecord->id;
+                    $medIn->cardiovascular = "";
+                    $medIn->digestive = "";
+                    $medIn->endocrine = "";
+                    $medIn->hemolymphatic = ""; //hemolinfatico
+                    $medIn->mamas = "";
+                    $medIn->skeletalMuscle = ""; //musculo esqueletico
+                    $medIn->skinAndAnnexes = ""; //Piel y anexos
+                    $medIn->reproductive = ""; //Reproductor
+                    $medIn->respiratory = ""; //respiratorio
+                    $medIn->nervousSystem = ""; //sistema nervioso
+                    $medIn->generalSystems = ""; //sistemas generales
+                    $medIn->urinary = ""; //urninario
+                    $medIn->save();
+                    //Estilo de vida
+                    $medLife = new MedLifestyle();
+                    $medLife->recordId = $medRecord->id;
+                    $medLife->save();
+                    //Alergias
+                    $medAler = new MedAllergie();
+                    $medAler->recordId = $medRecord->id;
+                    $medAler->description = "";
+                    $medAler->save();
+                }
+            }
             DB::commit();
             return $this->sendResponse($appo, 'Cita creada correctamente');
         } catch (\Throwable $th) {
@@ -296,13 +358,14 @@ class MedicalAppoitmentController extends Controller
             if ($nur) {
                 if ($appo->area === "Medicina") {
                     $medicineArea = MedicineArea::where('nur_id', '=', $nur->id)->first();
-                    if($medicineArea){
+                    if ($medicineArea) {
                         $medicineArea->delete();
                     }
                 }
                 if ($appo->area === "Odontologia") {
                     $record = OdoPatientRecord::where('nur_id', '=', $nur->id)->first();
                     if ($record) {
+                        //Falta eliminar acta y odontograma imagen
                         $familyHistory = OdoFamilyHistory::where('rec_id', '=', $record->id)->firstOrFail();
                         $familyDetails = OdoFamilyHistoryDetail::where('fam_id', '=', $familyHistory->id);
                         $stomatognathic = OdoStomatognathicTest::where('rec_id', '=', $record->id)->firstOrFail();

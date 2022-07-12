@@ -45,7 +45,7 @@ class OdoPatientRecordController extends Controller
         $disease_list = OdoDiseaseList::all();
         $pathologies = OdoPathologie::all();
         $plans = OdoPlan::all();
-        $cies = Cie::all();
+        $cies = Cie::take(10)->get();
         $teeth = OdoTooth::all();
         //Para obtener el ultimo odontograma
         $odontologyModel = OdoPatientRecord::join('nursing_area', 'odo_patient_records.nur_id', '=', 'nursing_area.id')
@@ -65,6 +65,7 @@ class OdoPatientRecordController extends Controller
             $odontogram = OdoOdontogram::with('teeth.symbologie', 'movilitiesRecessions')->where('rec_id', '=', $odontologyModel->id)->first();
         }
         $result = [
+            'appo_id'=>$appo_id,
             'patient' => $patient,
             'nursing_area' => $nur,
             'disease_list' => $disease_list,
@@ -77,11 +78,11 @@ class OdoPatientRecordController extends Controller
         return $this->sendResponse($result, 'Informacion del paciente');
     }
 
-    public function patientRecord($appo_id, $nur_id, $rec_id)
+    public function patientRecord($rec_id)
     {
-        $appo = MedicalAppointment::find($appo_id);
-        $nur = NursingArea::find($nur_id);
-        $patientRecord = OdoPatientRecord::find($rec_id);
+        //$appo = MedicalAppointment::find($appo_id);
+        //$nur = NursingArea::find($nur_id);
+        $patientRecord = OdoPatientRecord::with('nursingArea.medicalAppointment.patient')->find($rec_id);
         $familyHistory = OdoFamilyHistory::with('details')->where('rec_id', '=', $patientRecord->id)->first();
         $stomatognathicTest = OdoStomatognathicTest::with('details')->where('rec_id', '=', $patientRecord->id)->first();
         $indicator = OdoIndicator::with('details')->where('rec_id', '=', $patientRecord->id)->first();
@@ -99,9 +100,10 @@ class OdoPatientRecordController extends Controller
         $teeth = OdoTooth::all();
 
         $result = [
-            'patient' => $appo->patient,
+            'appo_id'=>$patientRecord->nursingArea->medicalAppointment->id,
+            'patient' => $patientRecord->nursingArea->medicalAppointment->patient,
             'patient_record' => $patientRecord,
-            'nursingArea' => $nur,
+            'nursingArea' => $patientRecord->nursingArea,
             'diseaseList' => $diseaseList,
             'pathologies' => $pathologies,
             'plans' => $plans,

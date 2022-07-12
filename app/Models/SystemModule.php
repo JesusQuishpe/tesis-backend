@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class SystemModule extends Model
 {
     use HasFactory;
-    protected $table='system_modules';
+    protected $table = 'system_modules';
 
     /*public function operaciones()
     {
@@ -17,6 +17,11 @@ class SystemModule extends Model
 
     public function submodules()
     {
-        return $this->hasMany(SystemModule::class,'parent_id','id')->where('enable','=',true);
+        return $this->hasMany(SystemModule::class, 'parent_id', 'id')->where('enable', '=', true);
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(SystemModule::class, 'parent_id', 'id');
     }
 }

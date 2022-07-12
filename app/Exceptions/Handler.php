@@ -67,7 +67,7 @@ class Handler extends ExceptionHandler
                         'message' => "No se puede eliminar, el registro está relacionado \n con otros datos.",
                         'exception_code' => $e->getCode(),
                         'exception_message' => $e->getMessage()
-                    ], 404);
+                    ], 409);
                 }
                 if ($sql_code === 1062) {
                     return response()->json([
@@ -76,7 +76,7 @@ class Handler extends ExceptionHandler
                         'message' => "El registro que intenta crear ya existe..",
                         'exception_code' => $e->getCode(),
                         'exception_message' => $e->getMessage()
-                    ], 404);
+                    ], 409);
                 }
             }
         });
@@ -86,7 +86,7 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'message' => "Ha ocurrido un error inesperado...",
                     'exception_code' => $e->getCode(),
-                    'exception_message' => $e->getMessage()
+                    'exception_message' => $e->getFile() + $e->getLine()
                 ], 404);
             }
         });

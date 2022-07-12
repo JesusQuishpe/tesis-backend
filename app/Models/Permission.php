@@ -16,6 +16,10 @@ class Permission extends Model
     'checked'
   ];
 
+  public function module()
+  {
+      return $this->belongsTo(SystemModule::class,'module_id','id');
+  }
   public function modules()
   {
     return $this->hasMany(SystemModule::class, 'module_id', 'id');
@@ -103,4 +107,5 @@ class Permission extends Model
 
     return $permissions;
   }
+
 }

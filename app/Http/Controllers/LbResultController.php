@@ -2,11 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cita;
-use App\Models\LbCaptura;
-use App\Models\LbCapturaPrueba;
-use App\Models\LbCapturaResultado;
-use App\Models\LbOrden;
 use App\Models\LbOrder;
 use App\Models\LbResult;
 use App\Models\LbResultDetail;

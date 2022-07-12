@@ -98,7 +98,7 @@ class OdontologyController extends Controller
             foreach ($data['family_history']['selectedFamilyHistory'] as $detail) {
                 $familyHistoryDetailModel = new OdoFamilyHistoryDetail();
                 $familyHistoryDetailModel->fam_id = $familyHistoryModel->id;
-                $familyHistoryDetailModel->disease_id = $detail['disease_id'];
+                $familyHistoryDetailModel->disease_id = $detail;
                 $familyHistoryDetailModel->save();
             }
             //Guardamos el examen stomatognatico
@@ -109,7 +109,7 @@ class OdontologyController extends Controller
             //Detalles del examen stomatognatico (patologias seleccionadas)
             foreach ($data['family_history']['selectedPathologies'] as $detail) {
                 $stomatognathicDetailModel = new OdoStomatognathicDetail();
-                $stomatognathicDetailModel->pat_id = $detail['pat_id'];
+                $stomatognathicDetailModel->pat_id = $detail;
                 $stomatognathicDetailModel->sto_test_id = $stomatognathicModel->id;
                 $stomatognathicDetailModel->save();
             }
@@ -251,11 +251,12 @@ class OdontologyController extends Controller
     {
         $date = Carbon::now()->format('Y-m-d');
         $hour = Carbon::now()->format('H:i:s');
+
         $actaPath = null;
         $odontogramPath = null;
         $data = json_decode($request->input('data'), true);
-        $odontogramNameOfFile = basename(Storage::path($data['patient_record']['odontogram_path']));
         $actaNameOfFile = basename(Storage::path($data['patient_record']['acta_path']));
+        $odontogramNameOfFile = basename(Storage::path($data['patient_record']['odontogram_path']));
 
         try {
 
@@ -306,7 +307,7 @@ class OdontologyController extends Controller
             foreach ($data['family_history']['selectedFamilyHistory'] as $item) {
                 $familyHistoryDetailModel = new OdoFamilyHistoryDetail();
                 $familyHistoryDetailModel->fam_id = $familyHistoryModel->id;
-                $familyHistoryDetailModel->disease_id = $item['disease_id'];
+                $familyHistoryDetailModel->disease_id = $item;//$item es el disease_id
                 $familyHistoryDetailModel->save();
             }
 
@@ -320,13 +321,13 @@ class OdontologyController extends Controller
             OdoStomatognathicDetail::where('sto_test_id', '=', $stomatognathicModel->id)->delete();
             foreach ($data['family_history']['selectedPathologies'] as $item) {
                 $stomatognathicDetailModel = new OdoStomatognathicDetail();
-                $stomatognathicDetailModel->pat_id = $item['pat_id'];
+                $stomatognathicDetailModel->pat_id = $item;//item es el pat_id
                 $stomatognathicDetailModel->sto_test_id = $stomatognathicModel->id;
                 $stomatognathicDetailModel->save();
             }
 
             //Guardamos los indicadores de salud bucal
-            $indicatorModel = OdoIndicator::find($data['indicators']['id']);
+            $indicatorModel = OdoIndicator::findOrFail($data['indicators']['id']);
             $indicatorModel->per_disease = $data['indicators']['per_disease'];
             $indicatorModel->bad_occlu = $data['indicators']['bad_occlu'];
             $indicatorModel->fluorosis = $data['indicators']['fluorosis'];
@@ -352,7 +353,7 @@ class OdontologyController extends Controller
             }
 
             //Guardamos los indices
-            $cpoCeoRatioModel = OdoCpoCeoRatio::find($data['cpo_ceo_ratios']['id']);
+            $cpoCeoRatioModel = OdoCpoCeoRatio::findOrFail($data['cpo_ceo_ratios']['id']);
             $cpoCeoRatioModel->cd = $data['cpo_ceo_ratios']['cpo_c'] ?: 0;
             $cpoCeoRatioModel->pd = $data['cpo_ceo_ratios']['cpo_p'] ?: 0;
             $cpoCeoRatioModel->od = $data['cpo_ceo_ratios']['cpo_o'] ?: 0;
@@ -364,7 +365,7 @@ class OdontologyController extends Controller
             $cpoCeoRatioModel->save();
 
             //Guardamos el plan diagnostico
-            $diagnosticPlanModel = OdoDiagnosticPlan::find($data['diagnostic_plans']['id']);
+            $diagnosticPlanModel = OdoDiagnosticPlan::findOrFail($data['diagnostic_plans']['id']);
             $diagnosticPlanModel->description = $data['diagnostic_plans']['plan_description'];
             $diagnosticPlanModel->save();
 
@@ -430,7 +431,7 @@ class OdontologyController extends Controller
                 $toothModel->save();
             }
             //Actualizar el valor de la cita
-            $appo = MedicalAppointment::find($data['appo_id']);
+            $appo = MedicalAppointment::findOrFail($data['appo_id']);
             $appo->attended = true;
             $appo->value = $appo->initial_value + $record->value; //El valor de dos es fijo, corresponde al valor de la consulta
             $appo->save();

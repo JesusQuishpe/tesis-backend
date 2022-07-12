@@ -48,6 +48,7 @@ class NursingArea extends Model
                     'patients.fullname as patient',
                     'patients.birth_date',
                     'patients.gender',
+                    'patients.identification_number',
                     'medical_appointments.area',
                     'medical_appointments.created_at'
                 ]
@@ -63,6 +64,20 @@ class NursingArea extends Model
             ->get();
     }
 
+    public function searchByIdentification($identification)
+    {
+        return NursingArea::join('medical_appointments','appo_id','=','medical_appointments.id')
+        ->join('patients','medical_appointments.patient_id','=','patients.id')
+        ->select([
+            'medical_appointments.id as appo_id',
+            'medical_appointments.date',
+            'medical_appointments.hour',
+            'nursing_area.id as nur_id',
+            'nursing_area.doctor'
+        ])
+        ->where('patients.identification_number','=',$identification)
+        ->get();
+    }
     public function medicalAppointment()
     {
         return $this->belongsTo(MedicalAppointment::class,'appo_id','id');

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         //\App\Models\User::factory(10)->create();
         //$this->call(PatientSeeder::class);
         //$this->call(DoctorSeeder::class);
+        //$this->call(CieSeeder::class);
         $this->call(PathologieSeeder::class);
         $this->call(DiseaseListSeeder::class);
         $this->call(SystemModuleSeeder::class);

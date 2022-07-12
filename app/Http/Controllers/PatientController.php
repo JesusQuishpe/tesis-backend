@@ -20,7 +20,7 @@ class PatientController extends Controller
         if ($request->has('identification') && $request->has('isSearch')) {
             return $this->sendResponse(
                 Patient::where('identification_number', '=', $request->input('identification'))
-                ->paginate(1, '*', 'page', 1),
+                ->firstOrFail(),
                 'Buscar paciente por cedula para mostrar en tabla'
             );
         }
@@ -53,9 +53,11 @@ class PatientController extends Controller
         $data = $request->only(
             [
                 'identification_number', 'lastname', 'name',
-                'birth_date', 'gender', 'cellphone_number',
+                'birth_date','age', 'gender', 'cellphone_number',
                 'address', 'province',
-                'city'
+                'city','occupation','email',
+                'mother_name','father_name','couple_name',
+                'origin','marital_status'
             ]
         );
 
@@ -93,7 +95,9 @@ class PatientController extends Controller
                 'identification_number', 'lastname', 'name',
                 'birth_date', 'gender', 'cellphone_number',
                 'address', 'province',
-                'city'
+                'city','occupation','email',
+                'mother_name','father_name','couple_name',
+                'origin','marital_status'
             ]
         );
         $data['date'] = $date;

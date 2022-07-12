@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Permission;
+use App\Models\Rol;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -48,9 +49,17 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($userId)
     {
-        return $this->sendResponse($user, 'Usuario');
+        $user=User::findOrFail($userId);
+        $user_permissions = Permission::with('module.parent')->where('rol_id', '=', $user->rol_id)->get();
+        return $this->sendResponse([
+            'id'=>$user->id,
+            'name'=>$user->name,
+            'email'=>$user->email,
+            'rol_id'=>$user->rol_id,
+            'permissions'=>$user_permissions
+        ],'Usuario por id');
     }
 
     /**
@@ -64,10 +73,10 @@ class UserController extends Controller
     {
         $user->name = $request->input('name');
         $user->email = $request->input('email');
-        if(Hash::check($request->input('old_password'),$user->password)){
+        if (Hash::check($request->input('old_password'), $user->password)) {
             $user->password = Hash::make($request->input('password'));
-        }else{
-            return $this->sendError('La contraseña actual inválida',[],401);
+        } else {
+            return $this->sendError('La contraseña actual inválida', [], 401);
         }
 
         $user->rol_id = $request->input('rol');
@@ -99,8 +108,9 @@ class UserController extends Controller
             return $this->sendError('Credenciales incorrectas', [], 401);
         }
 
-        $permission = new Permission();
-        $user_permissions = $permission->getPermissionsByRol($user->rol_id);
+        //$permission = new Permission();
+        $user_permissions = Permission::with('module.parent')->where('rol_id', '=', $user->rol_id)->get();
+        //$permission->getPermissionsByRol($user->rol_id);
 
         return $this->sendResponse([
             'id' => $user->id,
@@ -113,8 +123,9 @@ class UserController extends Controller
 
     public function permissions()
     {
-        $permission = new Permission();
-        $user_permissions = $permission->getPermissions();
-        return $this->sendResponse($user_permissions, 'Permisos del usuario');
+        $user_permissions = Rol::with('permissions:id,module_id,rol_id,checked')
+            ->select(['id', 'name'])
+            ->get();
+        return $this->sendResponse($user_permissions, 'Permisos agrupados por rol');
     }
 }

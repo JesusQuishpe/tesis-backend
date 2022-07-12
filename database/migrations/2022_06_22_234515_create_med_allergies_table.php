@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCiesTable extends Migration
+class CreateMedAllergiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateCiesTable extends Migration
      */
     public function up()
     {
-        Schema::create('cies', function (Blueprint $table) {
+        Schema::create('med_allergies', function (Blueprint $table) {
             $table->id();
-            $table->string('code',10);
-            $table->string('disease',300);
+            $table->unsignedBigInteger('recordId');
+            $table->foreign('recordId')->references('id')->on('medical_records');
+            $table->string('description',500);
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateCiesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('cies');
+        Schema::dropIfExists('med_allergies');
     }
 }
